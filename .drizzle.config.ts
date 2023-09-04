@@ -4,9 +4,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const DEFAULT_PORT = '5432';
-const DEFAULT_USER = 'chatter';
-const DEFAULT_PASSWORD = 'chatter';
-const DEFAULT_DATABASE = 'chatter';
+const DEFAULT_USER = 'cicipanel';
+const DEFAULT_PASSWORD = 'cicipanel';
+const DEFAULT_DATABASE = 'cicipanel';
 const DEFAULT_HOSTNAME = '127.0.0.1';
 
 const user = process.env.VITE_DB_USER === ''
