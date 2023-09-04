@@ -1,5 +1,5 @@
 import {
-  pgTable, bigint, varchar, boolean,
+  pgTable, bigint, varchar, boolean, text, uuid,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('auth_user', {
@@ -27,4 +27,20 @@ export const key = pgTable('user_key', {
     .notNull()
     .references(() => user.id),
   hashedPassword: varchar('hashed_password', { length: 255 }),
+});
+
+export const token = pgTable('auth_token', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  expires: bigint('expires', { mode: 'number' }).notNull(),
+});
+
+export const userConfig = pgTable('user_config', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: text('user_id')
+    .notNull()
+    .unique()
+    .references(() => user.id),
 });
