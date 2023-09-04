@@ -2,4 +2,6 @@
 	import { t } from 'svelte-i18n';
 </script>
 
-{$t('welcome')}
+<h1 class="h1">
+  {$t('welcome')}
+</h1>
