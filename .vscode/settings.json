@@ -2,5 +2,23 @@
     "i18n-ally.keystyle": "nested",
     "typescript.tsdk": "node_modules/typescript/lib",
     "cSpell.words": ["firstname", "lastname", "writables"],
-    "i18n-ally.localesPaths": ["src/lib/i18n/locales"]
+    "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "*-lock.json": true,
+        "*.lock": true,
+        "**/.classpath": true,
+        "**/.factorypath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.vscode": true,
+        "**/node_modules": true,
+        ".svelte-kit": true
+    },
+    "explorerExclude.backup": {}
 }
