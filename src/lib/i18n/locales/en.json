@@ -81,7 +81,7 @@
   "privacy-policy": "privacy policy",
   "profile": "Profile",
   "rate-limiter": {
-    "too-fast-error": "You are doing this too fast. Please wait a few minutes."
+    "too-fast-error": "rate-limiter.too-fast-error"
   },
   "required-fields": "* Required fields",
   "reset-password": "Reset password",
