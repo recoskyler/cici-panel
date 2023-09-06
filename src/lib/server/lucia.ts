@@ -1,7 +1,7 @@
 import { lucia } from 'lucia';
 import { dev } from '$app/environment';
 import { pg } from '@lucia-auth/adapter-postgresql';
-import db, { pool } from '$lib/server/drizzle';
+import { db, pool } from '$lib/server/drizzle';
 import { sveltekit } from 'lucia/middleware';
 import { EMAIL_VERIFICATION_EXPIRATION, PASSWORD_RESET_EXPIRATION } from '$env/static/private';
 import { token } from '$lib/db/schema';
@@ -23,10 +23,6 @@ export const auth = lucia({
   ),
   getUserAttributes: data => {
     return {
-      displayName: data.displayName,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      mobile: data.mobile,
       email: data.email,
       verified: data.verified,
     };
@@ -62,12 +58,12 @@ export const generateVerificationToken = async (userId: string, expirationInMinu
 export const validateToken = async (verificationToken: string) => {
   const storedToken = await db.query.token.findFirst({ where: eq(token.id, verificationToken) });
 
-  if (!storedToken) throw new Error('Expired or invalid token');
+  if (!storedToken) throw new Error('auth.expired-or-invalid-token');
 
   await db.delete(token).where(eq(token.id, verificationToken));
 
   if (!isWithinExpiration(storedToken.expires)) {
-    throw new Error('Expired or invalid token');
+    throw new Error('auth.expired-or-invalid-token');
   }
 
   return storedToken.userId;

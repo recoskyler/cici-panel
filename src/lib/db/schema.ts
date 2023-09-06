@@ -1,15 +1,12 @@
 import {
   pgTable, bigint, varchar, boolean, text, uuid,
 } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 export const user = pgTable('auth_user', {
   id: varchar('id', { length: 15 }).primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   verified: boolean('verified').default(false).notNull(),
-  displayName: varchar('display_name', { length: 20 }).notNull(),
-  firstName: varchar('first_name', { length: 255 }),
-  lastName: varchar('last_name', { length: 255 }),
-  mobile: varchar('mobile', { length: 32 }),
 });
 
 export const session = pgTable('user_session', {
@@ -43,4 +40,17 @@ export const userConfig = pgTable('user_config', {
     .notNull()
     .unique()
     .references(() => user.id),
+  displayname: varchar('displayname', { length: 20 }).notNull(),
+  firstname: varchar('firstname', { length: 255 }).notNull(),
+  lastname: varchar('lastname', { length: 255 }),
+  mobile: varchar('mobile', { length: 32 }),
 });
+
+// Relations
+
+export const userRelations = relations(user, ({ one }) => ({
+  config: one(userConfig, {
+    fields: [user.id],
+    references: [userConfig.userId],
+  }),
+}));

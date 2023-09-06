@@ -1,4 +1,6 @@
 {
     "i18n-ally.keystyle": "nested",
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "cSpell.words": ["firstname", "lastname", "writables"],
+    "i18n-ally.localesPaths": ["src/lib/i18n/locales"]
 }

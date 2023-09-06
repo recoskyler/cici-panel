@@ -8,21 +8,21 @@ import {
   MAX_EMAIL_LENGTH,
   MAX_FIRST_NAME_LENGTH,
   MAX_LAST_NAME_LENGTH,
+  MAX_MOBILE_LENGTH,
   MIN_DISPLAY_NAME_LENGTH,
   MIN_EMAIL_LENGTH,
   MIN_FIRST_NAME_LENGTH,
   MIN_LAST_NAME_LENGTH,
+  MIN_MOBILE_LENGTH,
 } from '$lib/constants';
+import isMobilePhone from 'validator/lib/isMobilePhone';
 
 // Zod Schemas
 
-export const insertUserSchema = createInsertSchema(user, {
-  email: z.string().email().min(MIN_EMAIL_LENGTH).max(MAX_EMAIL_LENGTH),
-  displayName: z.string().min(MIN_DISPLAY_NAME_LENGTH).max(MAX_DISPLAY_NAME_LENGTH),
-  firstName: z.string().min(MIN_FIRST_NAME_LENGTH).max(MAX_FIRST_NAME_LENGTH).nullable(),
-  lastName: z.string().min(MIN_LAST_NAME_LENGTH).max(MAX_LAST_NAME_LENGTH).nullable(),
-  mobile: z.string().min(5).max(32).nullable(),
-});
+export const insertUserSchema = createInsertSchema(
+  user,
+  { email: z.string().email().min(MIN_EMAIL_LENGTH).max(MAX_EMAIL_LENGTH) },
+);
 
 export const selectUserSchema = createSelectSchema(user);
 
@@ -30,7 +30,17 @@ export const insertTokenSchema = createInsertSchema(token);
 
 export const selectTokenSchema = createSelectSchema(token);
 
-export const insertUserConfigSchema = createInsertSchema(userConfig);
+export const insertUserConfigSchema = createInsertSchema(userConfig, {
+  displayname: z.string().min(MIN_DISPLAY_NAME_LENGTH).max(MAX_DISPLAY_NAME_LENGTH),
+  firstname: z.string().min(MIN_FIRST_NAME_LENGTH).max(MAX_FIRST_NAME_LENGTH),
+  lastname: z.string().min(MIN_LAST_NAME_LENGTH).max(MAX_LAST_NAME_LENGTH).nullable().optional(),
+  mobile: z.string()
+    .min(MIN_MOBILE_LENGTH)
+    .max(MAX_MOBILE_LENGTH)
+    .refine(isMobilePhone)
+    .nullable()
+    .optional(),
+});
 
 export const selectUserConfigSchema = createSelectSchema(userConfig);
 

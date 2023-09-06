@@ -1,13 +1,20 @@
+<script lang="ts">
+  import { _ } from 'svelte-i18n';
+</script>
+
 <svelte:head>
-  <title>CiciPanel | Cookie Policy</title>
+  <title>{$_('app-name')} | Cookie Policy</title>
 </svelte:head>
 
-<div class="text-black bg-white flex flex-col p-10 gap-5 h-screen overflow-y-auto">
-  <h1 class="h1">Cookie Policy for CiciPanel</h1>
+<div
+  class="text-black bg-white flex flex-col p-10 gap-5 h-screen overflow-y-auto"
+>
+  <h1 class="h1">Cookie Policy for {$_('app-name')}</h1>
 
   <p>
-    This is the Cookie Policy for CiciPanel, accessible from
-    https://cicipanel.recoskyler.com
+    This is the Cookie Policy for {$_('app-name')}, accessible from https://{$_(
+      'app-name',
+    )}.recoskyler.com
   </p>
 
   <p><strong>What Are Cookies</strong></p>
@@ -94,8 +101,9 @@
     <li class="my-2">
       <p><strong>Rate limiting cookies</strong></p>
       <p>
-        When you submit data to through a form such as those found on create account
-        or edit profile forms cookies may be set to limit the rate of your actions.
+        When you submit data to through a form such as those found on create
+        account or edit profile forms cookies may be set to limit the rate of
+        your actions.
       </p>
     </li>
   </ul>

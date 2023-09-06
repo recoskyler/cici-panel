@@ -5,7 +5,9 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+    interface Locals {
+      auth: import('lucia').AuthRequest;
+    }
 		// interface PageData {}
 		// interface Platform {}
 	}
@@ -17,10 +19,6 @@ declare namespace Lucia {
   type DatabaseUserAttributes = {
     email: string;
     verified: boolean;
-    displayName: string;
-    firstName: string;
-    lastName: string;
-    mobile: string;
   };
   // eslint-disable-next-line @typescript-eslint/ban-types
   type DatabaseSessionAttributes = {};

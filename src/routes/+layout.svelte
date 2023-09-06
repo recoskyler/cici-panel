@@ -1,5 +1,5 @@
 <script>
-  import '../app.postcss';
+  import '$lib/styles/app.postcss';
   import {
     computePosition, autoUpdate, offset, shift, flip, arrow,
   } from '@floating-ui/dom';
@@ -15,4 +15,15 @@
 <Modal />
 <Drawer />
 
-<slot />
+<div class="app">
+  <slot />
+</div>
+
+<style>
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+  }
+</style>

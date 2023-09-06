@@ -1,6 +1,10 @@
+<script lang='ts'>
+  import { _ } from 'svelte-i18n';
+</script>
+
 <!-- eslint-disable max-len -->
 <svelte:head>
-  <title>CiciPanel | Privacy Policy</title>
+  <title>{$_('app-name')} | {$_('privacy-policy')}</title>
 </svelte:head>
 
 <div class="text-black bg-white h-screen overflow-y-auto p-10">
