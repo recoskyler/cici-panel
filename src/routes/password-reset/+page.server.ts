@@ -8,7 +8,7 @@ import { db } from '$lib/server/drizzle';
 import { eq } from 'drizzle-orm';
 import { user } from '$lib/db/schema';
 import {
-  ENABLE_EMAIL_VERIFICATION, MAX_EMAIL_LENGTH, MIN_EMAIL_LENGTH,
+  ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MAX_EMAIL_LENGTH, MIN_EMAIL_LENGTH,
 } from '$lib/constants';
 import { passwordResetLimiter } from '$lib/server/limiter';
 import { z } from 'zod';
@@ -46,7 +46,7 @@ export const actions: Actions = {
 
     const form = await superValidate(request, passwordResetSchema);
 
-    if (await passwordResetLimiter.isLimited(event)) {
+    if (ENABLE_RATE_LIMIT && await passwordResetLimiter.isLimited(event)) {
       return setError(
         form,
         '',

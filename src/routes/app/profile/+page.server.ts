@@ -18,6 +18,7 @@ import {
   MIN_PASSWORD_LENGTH,
   MIN_MOBILE_LENGTH,
   MAX_MOBILE_LENGTH,
+  ENABLE_RATE_LIMIT,
 } from '$lib/constants';
 import { z } from 'zod';
 import {
@@ -110,7 +111,7 @@ export const actions: Actions = {
 
     const form = await superValidate(request, changePasswordSchema);
 
-    if (await profileUpdateLimiter.isLimited(event)) {
+    if (ENABLE_RATE_LIMIT && await profileUpdateLimiter.isLimited(event)) {
       return setError(
         form,
         '',
@@ -157,7 +158,7 @@ export const actions: Actions = {
 
     const form = await superValidate(request, changeEmailSchema);
 
-    if (await profileUpdateLimiter.isLimited(event)) {
+    if (ENABLE_RATE_LIMIT && await profileUpdateLimiter.isLimited(event)) {
       return setError(
         form,
         '',
@@ -211,7 +212,7 @@ export const actions: Actions = {
 
     const form = await superValidate(request, changeUserConfigSchema);
 
-    if (await profileUpdateLimiter.isLimited(event)) {
+    if (ENABLE_RATE_LIMIT && await profileUpdateLimiter.isLimited(event)) {
       return setError(
         form,
         '',

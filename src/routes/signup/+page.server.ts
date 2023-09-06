@@ -24,7 +24,7 @@ export const actions: Actions = {
       return setError(
         form,
         '',
-        'You are doing this too fast. Please wait a few minutes.',
+        'rate-limiter.too-fast-error',
       );
     }
 

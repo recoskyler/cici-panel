@@ -2,7 +2,9 @@ import { auth, validateToken } from '$lib/server/lucia';
 import { fail, type Actions } from '@sveltejs/kit';
 import { passwordResetLimiter } from '$lib/server/limiter';
 import type { PageServerLoad } from './$types';
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '$lib/constants';
+import {
+  ENABLE_RATE_LIMIT, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH,
+} from '$lib/constants';
 import { z } from 'zod';
 import {
   message, setError, superValidate,
@@ -27,7 +29,7 @@ export const actions: Actions = {
 
     const form = await superValidate(request, passwordResetSchema);
 
-    if (await passwordResetLimiter.isLimited(event)) {
+    if (ENABLE_RATE_LIMIT && await passwordResetLimiter.isLimited(event)) {
       return setError(
         form,
         '',
