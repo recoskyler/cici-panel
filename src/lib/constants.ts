@@ -15,7 +15,7 @@ import {
   PUBLIC_ENABLE_GRANULAR_PERMISSIONS,
   PUBLIC_ENABLE_THEMES,
   PUBLIC_ENABLE_RATE_LIMIT,
-  PUBLIC_ENABLE_GITHUB_LINK,
+  PUBLIC_ENABLE_APP_BAR_GITHUB_ICON,
 } from '$env/static/public';
 
 export const MIN_PASSWORD_LENGTH = Number.parseInt(PUBLIC_MIN_PASSWORD_LENGTH);
@@ -32,32 +32,38 @@ export const MIN_MOBILE_LENGTH = 5;
 export const MAX_MOBILE_LENGTH = 32;
 
 export const ALLOW_REGISTERS =
-  (PUBLIC_ALLOW_REGISTERS ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ALLOW_REGISTERS ?? '').trim() === ''
+  || (PUBLIC_ALLOW_REGISTERS ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ALLOW_REGISTERS ?? '').trim() === '1';
 
 export const ENABLE_EMAIL_VERIFICATION =
-  (PUBLIC_ENABLE_EMAIL_VERIFICATION ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ENABLE_EMAIL_VERIFICATION ?? '').trim() === ''
+  || (PUBLIC_ENABLE_EMAIL_VERIFICATION ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ENABLE_EMAIL_VERIFICATION ?? '').trim() === '1';
 
 export const ENABLE_PASSWORD_RESETS =
-  (PUBLIC_ENABLE_PASSWORD_RESETS ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ENABLE_PASSWORD_RESETS ?? '').trim() === ''
+  || (PUBLIC_ENABLE_PASSWORD_RESETS ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ENABLE_PASSWORD_RESETS ?? '').trim() === '1';
 
 export const ENABLE_GRANULAR_PERMISSIONS =
-  (PUBLIC_ENABLE_GRANULAR_PERMISSIONS ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ENABLE_GRANULAR_PERMISSIONS ?? '').trim() === ''
+  || (PUBLIC_ENABLE_GRANULAR_PERMISSIONS ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ENABLE_GRANULAR_PERMISSIONS ?? '').trim() === '1';
 
 export const ENABLE_THEMES =
-  (PUBLIC_ENABLE_THEMES ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ENABLE_THEMES ?? '').trim() === ''
+  || (PUBLIC_ENABLE_THEMES ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ENABLE_THEMES ?? '').trim() === '1';
 
 export const ENABLE_RATE_LIMIT =
-  (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim().toUpperCase() === 'true'
+  (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === ''
+  || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim().toLowerCase() === 'true'
   || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === '1';
 
-export const ENABLE_GITHUB_LINK =
-  (PUBLIC_ENABLE_GITHUB_LINK ?? '').trim().toUpperCase() === 'true'
-  || (PUBLIC_ENABLE_GITHUB_LINK ?? '').trim() === '1';
+export const ENABLE_GITHUB_ICON =
+  (PUBLIC_ENABLE_APP_BAR_GITHUB_ICON ?? '').trim() === ''
+  || (PUBLIC_ENABLE_APP_BAR_GITHUB_ICON ?? '').trim().toLowerCase() === 'true'
+  || (PUBLIC_ENABLE_APP_BAR_GITHUB_ICON ?? '').trim() === '1';
 
-export const DO_NOT_TRACK_COOKIE_NAME = 'cicipanel_do_not_track';
 export const DISCLAIMER_DISMISSED_COOKIE_NAME = 'cicipanel_disclaimer-dismissed';
