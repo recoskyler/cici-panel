@@ -6,7 +6,7 @@ export const signUpLimiter = new RateLimiter({
     IP: [10, 'h'], // IP address limiter
     IPUA: [8, 'm'], // IP + User Agent limiter
     cookie: {
-      name: 'chatter_su_rl',
+      name: 'cici_panel_su_rl',
       secret: RATE_LIMIT_SECRET,
       rate: [5, 'm'],
       preflight: true,
@@ -19,7 +19,7 @@ export const signInLimiter = new RateLimiter({
     IP: [8, 'h'], // IP address limiter
     IPUA: [5, 'm'], // IP + User Agent limiter
     cookie: {
-      name: 'chatter_si_rl',
+      name: 'cici_panel_si_rl',
       secret: RATE_LIMIT_SECRET,
       rate: [3, 'm'],
       preflight: true,
@@ -32,7 +32,7 @@ export const passwordResetLimiter = new RateLimiter({
     IP: [5, 'h'], // IP address limiter
     IPUA: [3, 'm'], // IP + User Agent limiter
     cookie: {
-      name: 'chatter_pr_rl',
+      name: 'cici_panel_pr_rl',
       secret: RATE_LIMIT_SECRET,
       rate: [2, 'm'],
       preflight: true,
@@ -42,12 +42,12 @@ export const passwordResetLimiter = new RateLimiter({
 
 export const emailVerificationLimiter = new RateLimiter({
   rates: {
-    IP: [3, 'h'], // IP address limiter
-    IPUA: [2, 'm'], // IP + User Agent limiter
+    IP: [1, 'h'], // IP address limiter
+    IPUA: [3, 'h'], // IP + User Agent limiter
     cookie: {
-      name: 'chatter_ev_rl',
+      name: 'cici_panel_ev_rl',
       secret: RATE_LIMIT_SECRET,
-      rate: [1, 'm'],
+      rate: [10, 'h'],
       preflight: true,
     },
   },
@@ -58,7 +58,7 @@ export const profileUpdateLimiter = new RateLimiter({
     IP: [3, 'h'], // IP address limiter
     IPUA: [4, 'm'], // IP + User Agent limiter
     cookie: {
-      name: 'chatter_pu_rl',
+      name: 'cici_panel_pu_rl',
       secret: RATE_LIMIT_SECRET,
       rate: [5, 'm'],
       preflight: true,
