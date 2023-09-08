@@ -58,12 +58,12 @@ export const generateVerificationToken = async (userId: string, expirationInMinu
 export const validateToken = async (verificationToken: string) => {
   const storedToken = await db.query.token.findFirst({ where: eq(token.id, verificationToken) });
 
-  if (!storedToken) throw new Error('auth.expired-or-invalid-token');
+  if (!storedToken) throw new Error('invalid-or-expired-token');
 
   await db.delete(token).where(eq(token.id, verificationToken));
 
   if (!isWithinExpiration(storedToken.expires)) {
-    throw new Error('auth.expired-or-invalid-token');
+    throw new Error('invalid-or-expired-token');
   }
 
   return storedToken.userId;
