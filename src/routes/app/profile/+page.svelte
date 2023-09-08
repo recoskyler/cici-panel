@@ -28,6 +28,8 @@
   import { toTitleCase } from '$lib/functions/helper';
   import { _ } from 'svelte-i18n';
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';
+  import { PUBLIC_GITHUB_LINK } from '$env/static/public';
+  import { ENABLE_THEMES } from '$lib/constants';
 
   export let data: PageData;
 
@@ -588,9 +590,11 @@
     </AccordionItem>
   </Accordion>
 
-  <div class="w-full flex items-center justify-center md:hidden mt-5">
-    <LightSwitch bgDark="bg-surface-400" />
-  </div>
+  {#if ENABLE_THEMES}
+    <div class="w-full flex items-center justify-center md:hidden mt-5">
+      <LightSwitch bgDark="bg-surface-400" />
+    </div>
+  {/if}
 
   <!-- eslint-disable max-len -->
   <div
@@ -625,7 +629,7 @@
     </a>
 
     <a
-      href="https://github.com/recoskyler/chatter/blob/main/LICENSE"
+      href={`${PUBLIC_GITHUB_LINK}/blob/main/LICENSE`}
       target="_blank"
       rel="noopener noreferrer"
       class="anchor text-center"
@@ -634,7 +638,7 @@
     </a>
 
     <a
-      href="https://github.com/recoskyler/chatter"
+      href={PUBLIC_GITHUB_LINK}
       target="_blank"
       rel="noopener noreferrer"
       class="anchor text-center"

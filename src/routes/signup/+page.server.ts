@@ -1,7 +1,10 @@
-import { fail, redirect } from '@sveltejs/kit';
+import {
+  error, fail, redirect,
+} from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import type { PageServerLoad, Actions } from './$types';
 import {
+  ALLOW_REGISTERS,
   ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
 import { setError, superValidate } from 'sveltekit-superforms/server';
@@ -16,6 +19,8 @@ const insertAuthUserSchema = insertUserSchema.extend(
 
 export const actions: Actions = {
   default: async event => {
+    if (!ALLOW_REGISTERS) throw error(501, 'feature-disabled');
+
     const { request, locals } = event;
 
     const form = await superValidate(request, insertAuthUserSchema);
@@ -81,6 +86,8 @@ export const load: PageServerLoad = async event => {
   const session = await locals.auth.validate();
 
   if (session) throw redirect(302, '/app');
+
+  if (!ALLOW_REGISTERS) throw redirect(302, '/login');
 
   const form = await superValidate(insertAuthUserSchema);
 

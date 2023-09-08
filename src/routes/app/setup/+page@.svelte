@@ -6,6 +6,7 @@
   import { superForm } from 'sveltekit-superforms/client';
   import { _ } from 'svelte-i18n';
   import {
+    ENABLE_THEMES,
     MAX_DISPLAY_NAME_LENGTH,
     MAX_FIRST_NAME_LENGTH,
     MAX_LAST_NAME_LENGTH,
@@ -178,9 +179,11 @@
     />
   </form>
 
-  <div class="flex items-center justify-center w-full">
-    <LightSwitch bgDark="bg-surface-400" />
-  </div>
+  {#if ENABLE_THEMES}
+    <div class="flex items-center justify-center w-full">
+      <LightSwitch bgDark="bg-surface-400" />
+    </div>
+  {/if}
 </div>
 
 <form

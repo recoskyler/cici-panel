@@ -11,10 +11,7 @@
   import Minidenticon from 'components/Minidenticon.svelte';
   import type { LayoutData } from './$types';
   import Fa from 'svelte-fa';
-  import {
-    faArrowLeft,
-    faHome,
-  } from '@fortawesome/free-solid-svg-icons';
+  import { faArrowLeft, faHome } from '@fortawesome/free-solid-svg-icons';
   import { pageTitle } from '$lib/stores/pageTitle';
   import { goto } from '$app/navigation';
   import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
@@ -25,6 +22,7 @@
   import Logo from 'components/Logo.svelte';
   import { _ } from 'svelte-i18n';
   import { PUBLIC_GITHUB_LINK } from '$env/static/public';
+  import { ENABLE_GITHUB_ICON, ENABLE_THEMES } from '$lib/constants';
 
   export let data: LayoutData;
 </script>
@@ -68,33 +66,37 @@
 
       <svelte:fragment slot="trail">
         <div class="flex flex-row items-center justify-center">
-          <div class="hidden md:block">
-            <LightSwitch bgDark="bg-surface-400" />
-          </div>
+          {#if ENABLE_THEMES}
+            <div class="hidden md:block">
+              <LightSwitch bgDark="bg-surface-400" />
+            </div>
+          {/if}
 
-          <a
-            href={PUBLIC_GITHUB_LINK}
-            class="px-3"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-umami-event="View GitHub button"
-          >
-            <span>
-              <img
-                src={githubWhite}
-                alt="View on GitHub"
-                style="width: 1.5rem; height: 1.5rem;"
-                class="hidden dark:block"
-              />
+          {#if ENABLE_GITHUB_ICON}
+            <a
+              href={PUBLIC_GITHUB_LINK}
+              class="px-3"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-umami-event="View GitHub button"
+            >
+              <span>
+                <img
+                  src={githubWhite}
+                  alt="View on GitHub"
+                  style="width: 1.5rem; height: 1.5rem;"
+                  class="hidden dark:block"
+                />
 
-              <img
-                src={githubBlack}
-                alt="View on GitHub"
-                style="width: 1.5rem; height: 1.5rem;"
-                class="block dark:hidden"
-              />
-            </span>
-          </a>
+                <img
+                  src={githubBlack}
+                  alt="View on GitHub"
+                  style="width: 1.5rem; height: 1.5rem;"
+                  class="block dark:hidden"
+                />
+              </span>
+            </a>
+          {/if}
         </div>
       </svelte:fragment>
     </AppBar>
@@ -102,17 +104,14 @@
 
   <svelte:fragment slot="sidebarLeft">
     <AppRail class="hidden md:block">
-      <AppRailAnchor
-        selected={$currentPage === SITE_PAGE.HOME}
-        href="/app"
-      >
+      <AppRailAnchor selected={$currentPage === SITE_PAGE.HOME} href="/app">
         <svelte:fragment slot="lead">
           <div class="flex items-center justify-center mb-2">
             <Fa icon={faHome} />
           </div>
         </svelte:fragment>
 
-        <span>{ $_('home') }</span>
+        <span>{$_('home')}</span>
       </AppRailAnchor>
 
       <AppRailAnchor
@@ -125,7 +124,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{ $_('profile') }</span>
+        <span>{$_('profile')}</span>
       </AppRailAnchor>
     </AppRail>
   </svelte:fragment>
@@ -142,17 +141,14 @@
       border=""
       class="bg-surface-100-800-token w-full block md:hidden"
     >
-      <TabAnchor
-        selected={$currentPage === SITE_PAGE.HOME}
-        href="/app"
-      >
+      <TabAnchor selected={$currentPage === SITE_PAGE.HOME} href="/app">
         <svelte:fragment slot="lead">
           <div class="flex items-center justify-center mb-2">
             <Fa icon={faHome} />
           </div>
         </svelte:fragment>
 
-        <span>{ $_('home') }</span>
+        <span>{$_('home')}</span>
       </TabAnchor>
 
       <TabAnchor
@@ -165,7 +161,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{ $_('profile') }</span>
+        <span>{$_('profile')}</span>
       </TabAnchor>
     </TabGroup>
   </svelte:fragment>

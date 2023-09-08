@@ -6,6 +6,7 @@
   import FormSuccess from 'components/FormSuccess.svelte';
   import { LightSwitch } from '@skeletonlabs/skeleton';
   import { _ } from 'svelte-i18n';
+  import { ENABLE_THEMES } from '$lib/constants';
 
   export let data: PageData;
 
@@ -43,7 +44,7 @@
 
     <input
       type="submit"
-      value={$delayed ? 'Loading...' : 'Continue'}
+      value={$delayed ? $_('loading') : $_('continue')}
       class={`btn w-full ${
         isEmailValid($form.email) && !$delayed && !$message
           ? 'variant-filled'
@@ -59,7 +60,9 @@
     </a>
   {/if}
 
-  <div class="flex items-center justify-center w-full mt-5">
-    <LightSwitch bgDark="bg-surface-400" />
-  </div>
+  {#if ENABLE_THEMES}
+    <div class="flex items-center justify-center w-full mt-5">
+      <LightSwitch bgDark="bg-surface-400" />
+    </div>
+  {/if}
 </div>

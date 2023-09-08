@@ -8,7 +8,11 @@ import { db } from '$lib/server/drizzle';
 import { eq } from 'drizzle-orm';
 import { user } from '$lib/db/schema';
 import {
-  ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MAX_EMAIL_LENGTH, MIN_EMAIL_LENGTH,
+  ENABLE_EMAIL_VERIFICATION,
+  ENABLE_PASSWORD_RESETS,
+  ENABLE_RATE_LIMIT,
+  MAX_EMAIL_LENGTH,
+  MIN_EMAIL_LENGTH,
 } from '$lib/constants';
 import { passwordResetLimiter } from '$lib/server/limiter';
 import { z } from 'zod';
@@ -21,6 +25,8 @@ const passwordResetSchema = z.object(
 );
 
 export const load: PageServerLoad = async event => {
+  if (!ENABLE_PASSWORD_RESETS) throw redirect(302, '/login');
+
   passwordResetLimiter.cookieLimiter?.preflight(event);
 
   const { locals } = event;
@@ -31,7 +37,7 @@ export const load: PageServerLoad = async event => {
 
   const dbUser = await db.query.user.findFirst({ where: eq(user.id, session.user.userId) });
 
-  if (!dbUser) throw error(404, 'User not found');
+  if (!dbUser) throw error(404, 'auth.user-not-found');
 
   if (dbUser && ENABLE_EMAIL_VERIFICATION && !dbUser.verified) {
     throw redirect(302, '/email-verification');
@@ -42,6 +48,8 @@ export const load: PageServerLoad = async event => {
 
 export const actions: Actions = {
   default: async event => {
+    if (!ENABLE_PASSWORD_RESETS) throw error(501, 'feature-disabled');
+
     const { request } = event;
 
     const form = await superValidate(request, passwordResetSchema);

@@ -6,6 +6,9 @@
   import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { _ } from 'svelte-i18n';
+  import {
+    ALLOW_REGISTERS, ENABLE_PASSWORD_RESETS, ENABLE_THEMES,
+  } from '$lib/constants';
 
   export let data: PageData;
 
@@ -86,12 +89,14 @@
 
     {#if $errors?._errors}<FormError error={$errors._errors} />{/if}
 
-    <p class="text-center">
-      <span class="text-slate-600 dark:text-slate-400">
-        {$_('forgot-your-password')}
-      </span>
-      <a class="anchor" href="/password-reset">{$_('auth.reset-password')}</a>
-    </p>
+    {#if ENABLE_PASSWORD_RESETS}
+      <p class="text-center">
+        <span class="text-slate-600 dark:text-slate-400">
+          {$_('forgot-your-password')}
+        </span>
+        <a class="anchor" href="/password-reset">{$_('auth.reset-password')}</a>
+      </p>
+    {/if}
 
     <input
       type="submit"
@@ -103,16 +108,22 @@
     />
   </form>
 
-  <hr class="!border-t-2 my-5" />
+  {#if ALLOW_REGISTERS || ENABLE_THEMES}
+    <hr class="!border-t-2 my-5" />
+  {/if}
 
-  <p class="text-center">
-    <span class="text-slate-600 dark:text-slate-400">
-      {$_('dont-have-an-account')}
-    </span>
-    <a class="anchor" href="/signup">{$_('auth.register-now')}</a>
-  </p>
+  {#if ALLOW_REGISTERS}
+    <p class="text-center">
+      <span class="text-slate-600 dark:text-slate-400">
+        {$_('dont-have-an-account')}
+      </span>
+      <a class="anchor" href="/signup">{$_('auth.register-now')}</a>
+    </p>
+  {/if}
 
-  <div class="flex items-center justify-center w-full mt-5">
-    <LightSwitch bgDark="bg-surface-400" />
-  </div>
+  {#if ENABLE_THEMES}
+    <div class="flex items-center justify-center w-full mt-5">
+      <LightSwitch bgDark="bg-surface-400" />
+    </div>
+  {/if}
 </div>

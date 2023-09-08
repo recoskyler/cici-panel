@@ -3,7 +3,9 @@ import { auth } from '$lib/server/lucia';
 import type { PageServerLoad, Actions } from './$types';
 import { setError, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
-import { ENABLE_RATE_LIMIT, MIN_PASSWORD_LENGTH } from '$lib/constants';
+import {
+  ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MIN_PASSWORD_LENGTH,
+} from '$lib/constants';
 import { signInLimiter } from '$lib/server/limiter';
 
 const loginSchema = z.object({
@@ -17,7 +19,9 @@ export const load: PageServerLoad = async event => {
   const { locals } = event;
   const session = await locals.auth.validate();
 
-  if (session) throw redirect(302, '/app');
+  if (session && ENABLE_EMAIL_VERIFICATION && !session.user.verified) {
+    throw redirect(302, '/email-verification');
+  }
 
   const form = await superValidate(loginSchema);
 

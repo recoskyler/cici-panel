@@ -7,7 +7,6 @@ import { auth, generateEmailVerificationToken } from '$lib/server/lucia';
 import { sendEmailVerificationEmail } from '$lib/server/mailer';
 import {
   DISCLAIMER_DISMISSED_COOKIE_NAME,
-  DO_NOT_TRACK_COOKIE_NAME,
   ENABLE_EMAIL_VERIFICATION,
   ENABLE_RATE_LIMIT,
 } from '$lib/constants';
@@ -26,7 +25,11 @@ export const load: PageServerLoad = async event => {
   }
 
   if (session.user.verified) {
-    throw redirect(302, '/app/profile');
+    throw redirect(302, '/app');
+  }
+
+  if (ENABLE_RATE_LIMIT && await emailVerificationLimiter.isLimited(event)) {
+    throw error(429, 'rate-limiter.too-fast-error');
   }
 
   try {
@@ -52,17 +55,12 @@ export const load: PageServerLoad = async event => {
 
 export const actions: Actions = {
   default: async event => {
-    if (ENABLE_RATE_LIMIT && await emailVerificationLimiter.isLimited(event)) {
-      throw error(429, 'rate-limiter.too-fast-error');
-    }
-
     const { locals, cookies } = event;
 
     const session = await locals.auth.validate();
 
     if (!session) return fail(401);
 
-    cookies.delete(DO_NOT_TRACK_COOKIE_NAME);
     cookies.delete(DISCLAIMER_DISMISSED_COOKIE_NAME);
 
     await auth.invalidateSession(session.sessionId);

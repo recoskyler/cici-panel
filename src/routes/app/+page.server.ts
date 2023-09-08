@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     where: eq(user.id, session.user.userId),
   });
 
-  if (!dbUser) throw error(404, 'User not found');
+  if (!dbUser) throw error(404, 'auth.user-not-found');
 
   if (dbUser.config === null) throw redirect(302, '/app/setup');
 

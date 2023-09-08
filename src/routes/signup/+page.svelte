@@ -9,6 +9,7 @@
   import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { _ } from 'svelte-i18n';
+  import { ENABLE_THEMES } from '$lib/constants';
 
   export let data: PageData;
 
@@ -122,7 +123,9 @@
     <a class="anchor" href="/login">{$_('auth.sign-in-now')}</a>
   </p>
 
-  <div class="flex items-center justify-center w-full mt-5">
-    <LightSwitch bgDark="bg-surface-400" />
-  </div>
+  {#if ENABLE_THEMES}
+    <div class="flex items-center justify-center w-full mt-5">
+      <LightSwitch bgDark="bg-surface-400" />
+    </div>
+  {/if}
 </div>

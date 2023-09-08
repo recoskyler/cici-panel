@@ -5,6 +5,10 @@ import { ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT } from '$lib/constants';
 import { emailVerificationLimiter } from '$lib/server/limiter';
 
 export const load: PageServerLoad = async event => {
+  if (!ENABLE_EMAIL_VERIFICATION) {
+    throw error(501, 'feature-disabled');
+  }
+
   emailVerificationLimiter.cookieLimiter?.preflight(event);
 
   if (ENABLE_RATE_LIMIT && await emailVerificationLimiter.isLimited(event)) {
@@ -12,11 +16,6 @@ export const load: PageServerLoad = async event => {
   }
 
   const { locals, params } = event;
-
-  if (!ENABLE_EMAIL_VERIFICATION) {
-    throw error(405, 'Email verification disabled');
-  }
-
   const { token } = params;
 
   try {
@@ -31,6 +30,6 @@ export const load: PageServerLoad = async event => {
   } catch (e) {
     console.error(e);
 
-    throw error(401, 'Invalid or expired token');
+    throw error(401, 'invalid-or-expired-token');
   }
 };

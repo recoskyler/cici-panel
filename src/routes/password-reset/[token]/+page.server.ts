@@ -1,9 +1,14 @@
 import { auth, validateToken } from '$lib/server/lucia';
-import { fail, type Actions } from '@sveltejs/kit';
+import {
+  fail, type Actions, redirect, error,
+} from '@sveltejs/kit';
 import { passwordResetLimiter } from '$lib/server/limiter';
 import type { PageServerLoad } from './$types';
 import {
-  ENABLE_RATE_LIMIT, MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH,
+  ENABLE_PASSWORD_RESETS,
+  ENABLE_RATE_LIMIT,
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
 import { z } from 'zod';
 import {
@@ -16,6 +21,8 @@ const passwordResetSchema = z.object(
 );
 
 export const load: PageServerLoad = async event => {
+  if (!ENABLE_PASSWORD_RESETS) throw redirect(302, '/login');
+
   passwordResetLimiter.cookieLimiter?.preflight(event);
 
   const form = await superValidate(passwordResetSchema);
@@ -25,6 +32,8 @@ export const load: PageServerLoad = async event => {
 
 export const actions: Actions = {
   default: async event => {
+    if (!ENABLE_PASSWORD_RESETS) throw error(501, 'feature-disabled');
+
     const { request, params } = event;
 
     const form = await superValidate(request, passwordResetSchema);
