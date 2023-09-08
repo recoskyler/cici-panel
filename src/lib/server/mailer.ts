@@ -8,6 +8,7 @@ import {
   EMAIL_VERIFICATION_EXPIRATION,
   // SMTP_PORT,
 } from '$env/static/private';
+import { PUBLIC_FROM_EMAIL_ADDRESS } from '$env/static/public';
 import { SMTPClient } from 'emailjs';
 
 export const mailer = new SMTPClient({
@@ -22,13 +23,13 @@ export const sendEmailVerificationEmail = async (to: string, token: string) => {
     const link = `${dev ? 'http://localhost:5173' : `https://${VITE_HOSTNAME}`}/email-verification/${token}`;
 
     // eslint-disable-next-line max-len
-    const content = `Welcome to Chatter!\n\nTo finalize creating your account, please verify your email by clicking the link below within ${EMAIL_VERIFICATION_EXPIRATION} minutes:\n\n${link}`;
+    const content = `Welcome to Cici Panel!\n\nTo finalize creating your account, please verify your email by clicking the link below within ${EMAIL_VERIFICATION_EXPIRATION} minutes:\n\n${link}`;
 
     const message = await mailer.sendAsync({
       text: content,
-      from: 'noreply@recoskyler.com',
+      from: PUBLIC_FROM_EMAIL_ADDRESS,
       to: to,
-      subject: 'Chatter | Email Verification',
+      subject: 'Cici Panel | Email Verification',
     });
 
     console.log(message);
@@ -50,9 +51,9 @@ export const sendPasswordResetEmail = async (to: string, token: string) => {
 
     const message = await mailer.sendAsync({
       text: content,
-      from: 'noreply@recoskyler.com',
+      from: PUBLIC_FROM_EMAIL_ADDRESS,
       to: to,
-      subject: 'Chatter | Password Reset',
+      subject: 'Cici Panel | Password Reset',
     });
 
     console.log(message);
