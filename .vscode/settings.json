@@ -1,7 +1,15 @@
 {
     "i18n-ally.keystyle": "nested",
     "typescript.tsdk": "node_modules/typescript/lib",
-    "cSpell.words": ["cici", "firstname", "lastname", "writables"],
+    "cSpell.words": [
+        "cici",
+        "cicipanel",
+        "dont",
+        "firstname",
+        "lastname",
+        "verif",
+        "writables"
+    ],
     "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
     "files.exclude": {
         "**/.git": true,
@@ -18,7 +26,8 @@
         "**/.settings": true,
         "**/.vscode": true,
         "**/node_modules": true,
-        ".svelte-kit": true
+        ".svelte-kit": true,
+        "drizzle": true
     },
     "explorerExclude.backup": {}
 }
