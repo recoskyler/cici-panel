@@ -69,7 +69,7 @@
     delayed: cnDelayed,
   } = superForm(data.changeUserConfigForm);
 
-  $pageTitle = 'Profile';
+  $pageTitle = 'page-title.profile';
   $currentPage = SITE_PAGE.PROFILE;
   $canGoBack = null;
 
@@ -135,7 +135,7 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('profile')}</title>
+  <title>{$_('app-name')} | {$_('page-title.profile')}</title>
 </svelte:head>
 
 <main
@@ -161,7 +161,15 @@
     </div>
   </div>
 
-  <form method="post" action="?/signOut" class="w-full mt-5">
+  <div class="flex flex-row gap-2 flex-wrap mt-5">
+    {#each data.user.allRoles as role}
+      <span class="badge variant-ghost">
+        {$_(role.name)}
+      </span>
+    {/each}
+  </div>
+
+  <form method="post" action="?/signOut" class="w-full mt-2">
     <input
       type="submit"
       value="Sign out"
@@ -642,7 +650,6 @@
       target="_blank"
       rel="noopener noreferrer"
       class="anchor text-center"
-      data-umami-event="View source code anchor"
     >
       {toTitleCase($_('source-code'))}
     </a>

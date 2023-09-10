@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import {
   PUBLIC_MIN_PASSWORD_LENGTH,
   PUBLIC_MAX_PASSWORD_LENGTH,
@@ -16,7 +17,9 @@ import {
   PUBLIC_ENABLE_THEMES,
   PUBLIC_ENABLE_RATE_LIMIT,
   PUBLIC_ENABLE_APP_BAR_GITHUB_ICON,
+  PUBLIC_GRANULAR_PERMISSIONS_PREFIX,
 } from '$env/static/public';
+import type { GranularPermission } from './server/granular-permissions/permissions';
 
 export const MIN_PASSWORD_LENGTH = Number.parseInt(PUBLIC_MIN_PASSWORD_LENGTH);
 export const MAX_PASSWORD_LENGTH = Number.parseInt(PUBLIC_MAX_PASSWORD_LENGTH);
@@ -57,9 +60,12 @@ export const ENABLE_THEMES =
   || (PUBLIC_ENABLE_THEMES ?? '').trim() === '1';
 
 export const ENABLE_RATE_LIMIT =
-  (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === ''
-  || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim().toLowerCase() === 'true'
-  || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === '1';
+  !dev
+  && (
+    (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === ''
+    || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim().toLowerCase() === 'true'
+    || (PUBLIC_ENABLE_RATE_LIMIT ?? '').trim() === '1'
+  );
 
 export const ENABLE_GITHUB_ICON =
   (PUBLIC_ENABLE_APP_BAR_GITHUB_ICON ?? '').trim() === ''
@@ -67,3 +73,56 @@ export const ENABLE_GITHUB_ICON =
   || (PUBLIC_ENABLE_APP_BAR_GITHUB_ICON ?? '').trim() === '1';
 
 export const DISCLAIMER_DISMISSED_COOKIE_NAME = 'cicipanel_disclaimer-dismissed';
+
+export const GRANULAR_PERMISSIONS_PREFIX = (PUBLIC_GRANULAR_PERMISSIONS_PREFIX ?? '').trim() === ''
+  ? 'granular-perms' : PUBLIC_GRANULAR_PERMISSIONS_PREFIX.trim();
+
+export const PERMISSIONS = [
+  'change-own-password',
+  'change-own-email-address',
+  'change-own-user-details',
+  'delete-own-account',
+  'create-new-user',
+  'update-other-user',
+  'read-list-other-users',
+  'delete-other-user',
+  'create-user-group',
+  'update-user-group-details',
+  'read-list-user-groups',
+  'delete-user-group',
+  'change-user-permissions',
+  'change-role-permissions',
+  'change-user-group-permissions',
+  'change-user-roles',
+  'change-user-group-roles',
+  'add-remove-user-group-members',
+  'create-role',
+  'delete-role',
+  'read-list-roles',
+  'read-list-permissions',
+] as const;
+
+export const MODERATOR_PERMISSIONS: GranularPermission[] = [
+  'create-new-user',
+  'update-other-user',
+  'read-list-other-users',
+  'delete-other-user',
+  'create-user-group',
+  'update-user-group-details',
+  'read-list-user-groups',
+  'delete-user-group',
+  'change-user-permissions',
+  'change-user-group-permissions',
+  'change-user-roles',
+  'change-user-group-roles',
+  'add-remove-user-group-members',
+  'read-list-roles',
+  'read-list-permissions',
+];
+
+export const USER_PERMISSIONS: GranularPermission[] = [
+  'change-own-password',
+  'change-own-email-address',
+  'change-own-user-details',
+  'delete-own-account',
+];

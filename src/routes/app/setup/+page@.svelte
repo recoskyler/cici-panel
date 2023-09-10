@@ -42,16 +42,16 @@
   >
     <Step>
       <svelte:fragment slot="header">
-        {$_('welcome-msg', { values: { place: appName } })}
+        {$_('setup.welcome-msg', { values: { place: appName } })}
       </svelte:fragment>
 
       {$_('setup.lets-get-started-with-your-user-account-setup')}
     </Step>
 
     <Step>
-      <svelte:fragment slot="header">{$_('what-is-this-app')}</svelte:fragment>
+      <svelte:fragment slot="header">{$_('setup.what-is-this-app')}</svelte:fragment>
 
-      {$_('app-description')}
+      {$_('setup.app-description')}
     </Step>
 
     <Step
@@ -60,7 +60,7 @@
         ($form.displayname ?? '').trim().length > MAX_DISPLAY_NAME_LENGTH}
     >
       <svelte:fragment slot="header"
-        >{$_('what-should-we-call-you')}</svelte:fragment
+        >{$_('setup.what-should-we-call-you')}</svelte:fragment
       >
 
       <label for="displayname" class="label mb-2">
@@ -90,7 +90,7 @@
         ($form.firstname ?? '').trim().length > MAX_FIRST_NAME_LENGTH}
     >
       <svelte:fragment slot="header">
-        {$_('what-is-your-first-name')}
+        {$_('setup.what-is-your-first-name')}
       </svelte:fragment>
 
       <label for="firstname" class="label mb-2">
@@ -120,7 +120,7 @@
           ($form.lastname ?? '').trim().length > MAX_LAST_NAME_LENGTH)}
     >
       <svelte:fragment slot="header">
-        {$_('what-is-your-last-name-optional')}
+        {$_('setup.what-is-your-last-name-optional')}
       </svelte:fragment>
 
       <label for="lastname" class="label mb-2">
@@ -148,7 +148,7 @@
           ($form.mobile ?? '').trim().length > MAX_MOBILE_LENGTH)}
     >
       <svelte:fragment slot="header">
-        {$_('what-is-your-mobile-number-optional')}
+        {$_('setup.what-is-your-mobile-number-optional')}
       </svelte:fragment>
 
       <label for="mobile" class="label mb-2">

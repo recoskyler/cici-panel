@@ -3,14 +3,15 @@ import {
 } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/drizzle';
-import { user, userConfig } from '$lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { userConfig } from '$lib/db/schema';
 import {
-  DISCLAIMER_DISMISSED_COOKIE_NAME, DO_NOT_TRACK_COOKIE_NAME, ENABLE_EMAIL_VERIFICATION,
+    DISCLAIMER_DISMISSED_COOKIE_NAME,
+    ENABLE_EMAIL_VERIFICATION,
 } from '$lib/constants';
 import { setError, superValidate } from 'sveltekit-superforms/server';
 import { insertUserConfigSchema, type NewUserConfig } from '$lib/db/types';
 import { auth } from '$lib/server/lucia';
+import { currentUserFullQuery } from '$lib/server/queries';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
@@ -19,10 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw redirect(302, '/login');
   }
 
-  const dbUser = await db.query.user.findFirst({
-    with: { config: true },
-    where: eq(user.id, session.user.userId),
-  });
+    const dbUser = await currentUserFullQuery.execute({ id: session.user.userId });
 
   if (!dbUser) throw error(404, 'auth.user-not-found');
   if (dbUser.config) throw redirect(302, '/app');
@@ -71,7 +69,6 @@ export const actions: Actions = {
   signOut: async ({ locals, cookies }) => {
     const session = await locals.auth.validate();
 
-    cookies.delete(DO_NOT_TRACK_COOKIE_NAME);
     cookies.delete(DISCLAIMER_DISMISSED_COOKIE_NAME);
 
     if (!session) return fail(401);

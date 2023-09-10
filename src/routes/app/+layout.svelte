@@ -11,7 +11,9 @@
   import Minidenticon from 'components/Minidenticon.svelte';
   import type { LayoutData } from './$types';
   import Fa from 'svelte-fa';
-  import { faArrowLeft, faHome } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faArrowLeft, faHammer, faHome,
+  } from '@fortawesome/free-solid-svg-icons';
   import { pageTitle } from '$lib/stores/pageTitle';
   import { goto } from '$app/navigation';
   import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
@@ -27,7 +29,7 @@
   export let data: LayoutData;
 </script>
 
-<AppShell class="h-screen">
+<AppShell class="h-screen dark:bg-surface-800 bg-surface-100">
   <svelte:fragment slot="header">
     <AppBar
       gridColumns="grid-cols-3"
@@ -40,7 +42,6 @@
             aria-label="Go back"
             title="Go back"
             class="p-2 ml-2"
-            data-umami-event="Back button"
             on:click={async () => {
               const url = $canGoBack;
 
@@ -60,7 +61,7 @@
         <Logo />
       {:else}
         <h3 class="h3">
-          {$pageTitle}
+          {$_($pageTitle)}
         </h3>
       {/if}
 
@@ -78,7 +79,6 @@
               class="px-3"
               target="_blank"
               rel="noopener noreferrer"
-              data-umami-event="View GitHub button"
             >
               <span>
                 <img
@@ -103,16 +103,28 @@
   </svelte:fragment>
 
   <svelte:fragment slot="sidebarLeft">
-    <AppRail class="hidden md:block">
+    <AppRail class="hidden md:block px-2 !w-24">
       <AppRailAnchor selected={$currentPage === SITE_PAGE.HOME} href="/app">
         <svelte:fragment slot="lead">
           <div class="flex items-center justify-center mb-2">
-            <Fa icon={faHome} />
+            <Fa icon={faHome} fw />
           </div>
         </svelte:fragment>
 
-        <span>{$_('home')}</span>
+        <span>{$_('page-title.home')}</span>
       </AppRailAnchor>
+
+      {#if data.isModerator}
+        <AppRailAnchor selected={$currentPage === SITE_PAGE.MODERATION} href="/app/moderation">
+          <svelte:fragment slot="lead">
+            <div class="flex items-center justify-center mb-2">
+              <Fa icon={faHammer} fw />
+            </div>
+          </svelte:fragment>
+
+          <span>{$_('page-title.moderation')}</span>
+        </AppRailAnchor>
+      {/if}
 
       <AppRailAnchor
         selected={$currentPage === SITE_PAGE.PROFILE}
@@ -124,12 +136,14 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('profile')}</span>
+        <span>{$_('page-title.profile')}</span>
       </AppRailAnchor>
     </AppRail>
   </svelte:fragment>
 
-  <slot />
+  <div class="rounded-tl-lg bg-surface-50 dark:bg-surface-900 h-full">
+    <slot />
+  </div>
 
   <svelte:fragment slot="footer">
     <TabGroup
@@ -148,7 +162,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('home')}</span>
+        <span>{$_('page-title.home')}</span>
       </TabAnchor>
 
       <TabAnchor
@@ -161,7 +175,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('profile')}</span>
+        <span>{$_('page-title.profile')}</span>
       </TabAnchor>
     </TabGroup>
   </svelte:fragment>

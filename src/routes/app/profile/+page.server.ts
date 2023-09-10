@@ -3,7 +3,6 @@ import type { PageServerLoad } from './$types';
 import { type Actions, fail } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import {
-  DO_NOT_TRACK_COOKIE_NAME,
   DISCLAIMER_DISMISSED_COOKIE_NAME,
   ENABLE_EMAIL_VERIFICATION,
   MAX_EMAIL_LENGTH,
@@ -26,9 +25,13 @@ import {
 } from 'sveltekit-superforms/server';
 import { LuciaError } from 'lucia';
 import { db } from '$lib/server/drizzle';
-import { user, userConfig } from '$lib/db/schema';
+import {
+  userConfig, usersToGroups, usersToPermissions, usersToRoles,
+} from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { profileUpdateLimiter } from '$lib/server/limiter';
+import { currentUserFullQuery } from '$lib/server/queries';
+import { transformUser } from '$lib/server/granular-permissions/transform';
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH),
@@ -56,7 +59,6 @@ export const actions: Actions = {
   signOut: async ({ locals, cookies }) => {
     const session = await locals.auth.validate();
 
-    cookies.delete(DO_NOT_TRACK_COOKIE_NAME);
     cookies.delete(DISCLAIMER_DISMISSED_COOKIE_NAME);
 
     if (!session) return fail(401);
@@ -86,6 +88,10 @@ export const actions: Actions = {
       await auth.useKey('email', session.user.email, form.data.password);
 
       await db.delete(userConfig).where(eq(userConfig.userId, session.user.userId));
+
+      await db.delete(usersToGroups).where(eq(usersToGroups.userId, session.user.userId));
+      await db.delete(usersToRoles).where(eq(usersToRoles.userId, session.user.userId));
+      await db.delete(usersToPermissions).where(eq(usersToPermissions.userId, session.user.userId));
 
       // TODO: Delete other user data here
 
@@ -260,10 +266,7 @@ export const load: PageServerLoad = async event => {
     throw redirect(302, '/email-verification');
   }
 
-  const dbUser = await db.query.user.findFirst({
-    with: { config: true },
-    where: eq(user.id, session.user.userId),
-  });
+  const dbUser = await currentUserFullQuery.execute({ id: session.user.userId });
 
   if (!dbUser) throw error(404, 'auth.user-not-found');
 
@@ -280,7 +283,7 @@ export const load: PageServerLoad = async event => {
   changeUserConfigForm.data.mobile = dbUser.config.mobile;
 
   return {
-    user: dbUser,
+    user: transformUser(dbUser),
     changePasswordForm,
     changeEmailForm,
     deleteAccountForm,

@@ -8,13 +8,13 @@
   // export let data: PageData;
 
   $currentPage = SITE_PAGE.HOME;
-  $pageTitle = 'app-name';
+  $pageTitle = 'page-title.app-name';
   $canGoBack = null;
 </script>
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('app-')}</title>
+  <title>{$_('app-name')} | {$_('page-title.home')}</title>
 </svelte:head>
 
 <div class="h-full flex items-center p-2 flex-col gap-5">

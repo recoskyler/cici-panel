@@ -23,6 +23,10 @@ export const load: PageServerLoad = async event => {
     throw redirect(302, '/email-verification');
   }
 
+  if (session) {
+    throw redirect(302, '/app');
+  }
+
   const form = await superValidate(loginSchema);
 
   return { form };

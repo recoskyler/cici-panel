@@ -3,7 +3,8 @@ import { writable } from 'svelte/store';
 export const SITE_PAGE = {
   HOME: 'HOME',
   PROFILE: 'PROFILE',
-  ACCOUNTS: 'ACCOUNTS',
+  MODERATION: 'MODERATION',
+  USERS: 'USERS',
 } as const;
 
 type ObjectValues<T> = T[keyof T];

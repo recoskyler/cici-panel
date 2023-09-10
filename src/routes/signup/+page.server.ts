@@ -12,6 +12,10 @@ import { insertUserSchema } from '$lib/db/types';
 import { z } from 'zod';
 import { isPasswordValid } from '$lib/functions/validators';
 import { signUpLimiter } from '$lib/server/limiter';
+import { db } from '$lib/server/drizzle';
+import { seed } from '$lib/db/seed';
+import { role, usersToRoles } from '$lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 const insertAuthUserSchema = insertUserSchema.extend(
   { password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH) },
@@ -44,6 +48,8 @@ export const actions: Actions = {
     }
 
     try {
+      const isFirstUser = !(await db.query.user.findFirst());
+
       const user = await auth.createUser({
         key: {
           providerId: 'email',
@@ -55,6 +61,22 @@ export const actions: Actions = {
           verified: false,
         },
       });
+
+      if (isFirstUser) {
+        console.log('This is the first user. The first user will be made the administrator.');
+
+        await seed();
+
+        const adminRole = await db.query.role.findFirst(
+          { where: eq(role.name, 'granular-perms.administrator') },
+        );
+
+        if (!adminRole) {
+          console.error('Administrator role not found?');
+        } else {
+          await db.insert(usersToRoles).values({ roleId: adminRole.id, userId: user.userId });
+        }
+      }
 
       console.log('User created');
 
@@ -68,7 +90,7 @@ export const actions: Actions = {
     } catch (e) {
       console.error('Email taken: ', e);
 
-      return setError(form, 'email', 'Email already exists.');
+      return setError(form, 'email', 'email-already-exists');
     }
 
     if (ENABLE_EMAIL_VERIFICATION) {
