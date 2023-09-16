@@ -29,5 +29,15 @@
         ".svelte-kit": true,
         "drizzle": true
     },
-    "explorerExclude.backup": {}
+    "explorerExclude.backup": {},
+    "i18n-ally.extract.ignoredByFiles": {
+        "src/routes/app/moderation/users/create/+page.svelte": [
+            " {\n                e.preventDefault();\n                passwordVisible = !passwordVisible;\n              }}\n              type=\"button\"\n              class=\"flex items-center justify-center\"\n              title={$_('auth.show-hide-password')}\n            >\n              "
+        ]
+    },
+    "i18n-ally.extract.ignored": [
+        "\n\n      {#if\n        (\n          data.userPerms.canSetGroups\n          || data.userPerms.canSetRoles\n          || data.userPerms.canSetPermissions\n        ) ",
+        "&",
+        "&"
+    ]
 }
