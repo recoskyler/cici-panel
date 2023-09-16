@@ -7,6 +7,7 @@
     passwordStrengthColorLevels,
     passwordStrengthLevels,
   } from './helpers';
+  import { _ } from 'svelte-i18n';
 
   const options = {
     translations: zxcvbnEnPackage.translations,
@@ -29,11 +30,11 @@
   for="strength"
   class="label mb-2 mt-3 text-slate-600 dark:text-slate-400"
 >
-  Password strength:
+  {$_('password-strength-label')}
   <strong>
     <span class={`label ${passwordStrengthColorLevels[score]}`}>
-      {passwordStrengthLevels[score]}</span
-    >
+      {$_(passwordStrengthLevels[score])}
+    </span>
   </strong>
 </label>
 

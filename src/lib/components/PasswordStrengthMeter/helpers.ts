@@ -6,7 +6,14 @@ export const passwordPopupFocusBlur: PopupSettings = {
   placement: 'top',
 };
 
-export const passwordStrengthLevels = ['Super weak', 'Very weak', 'Weak', 'Strong', 'Very strong'];
+export const passwordStrengthLevels = [
+  'password-strength.super-weak',
+  'password-strength.very-weak',
+  'password-strength.weak',
+  'password-strength.strong',
+  'password-strength.very-strong',
+];
+
 export const passwordStrengthColorLevels = [
   'text-red-600',
   'text-red-500',

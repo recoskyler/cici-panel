@@ -44,7 +44,7 @@ export const actions: Actions = {
     }
 
     if (!isPasswordValid(form.data.password)) {
-      return setError(form, 'password', 'Password does not meet the requirements or too weak.');
+      return setError(form, 'password', 'error.password-does-not-meet-the-requirements-or-too-weak');
     }
 
     try {
@@ -68,13 +68,23 @@ export const actions: Actions = {
         await seed();
 
         const adminRole = await db.query.role.findFirst(
-          { where: eq(role.name, 'granular-perms.administrator') },
+          { where: eq(role.name, 'Administrator') },
         );
 
         if (!adminRole) {
           console.error('Administrator role not found?');
         } else {
           await db.insert(usersToRoles).values({ roleId: adminRole.id, userId: user.userId });
+        }
+      } else {
+        const userRole = await db.query.role.findFirst(
+          { where: eq(role.name, 'User') },
+        );
+
+        if (!userRole) {
+          console.error('User role not found?');
+        } else {
+          await db.insert(usersToRoles).values({ roleId: userRole.id, userId: user.userId });
         }
       }
 

@@ -1,61 +1,58 @@
-import { ENABLE_EMAIL_VERIFICATION } from '$lib/constants';
-import { hasPermission } from '$lib/server/granular-permissions/permissions';
-import { transformUser } from '$lib/server/granular-permissions/transform';
-import { currentUserFullQuery } from '$lib/server/queries';
+import { can } from '$lib/server/granular-permissions/permissions';
+import { toFullUser, toSafeUser } from '$lib/server/granular-permissions/transform';
+import { fullUserQuery, safeOtherUsersQuery } from '$lib/server/queries';
 import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { db } from '$lib/server/drizzle';
-import { user } from '$lib/db/schema';
-import { ne } from 'drizzle-orm';
+import type { SafeUser } from '$lib/db/types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
+  const dbUser = await fullUserQuery.execute({ id: session.user.userId });
 
-  if (!session) throw redirect(302, '/login');
-
-  if (ENABLE_EMAIL_VERIFICATION && !session.user.verified) {
-    throw redirect(302, '/email-verification');
-  }
-
-  const dbUser = await currentUserFullQuery.execute({ id: session.user.userId });
-
-  if (!dbUser) throw error(404, 'auth.user-not-found');
+  if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
 
   if (!dbUser.config) throw redirect(302, '/app/setup');
 
-  const fullUser = transformUser(dbUser);
+  const fullUser = toFullUser(dbUser);
 
-  const canViewUsers = hasPermission(fullUser, 'read-list-other-users');
-  const canCreateUsers = hasPermission(fullUser, 'create-new-user');
-  const canViewRoles = hasPermission(fullUser, 'read-list-roles');
-  const canViewGroups = hasPermission(fullUser, 'read-list-user-groups');
+  if (!can(fullUser, 'read-list-other-users')) throw error(403, 'forbidden');
 
-  let users;
+  const perms = {
+    canCreateUsers: can(fullUser, 'create-new-user'),
+    canEditUsers: can(fullUser, 'update-other-user'),
+    canDeleteUsers: can(fullUser, 'delete-other-user'),
+    canViewRoles: can(fullUser, 'read-list-roles'),
+    canViewGroups: can(fullUser, 'read-list-user-groups'),
+  };
 
-  if (canViewUsers) {
-    users = await db.query.user.findMany({
-      where: ne(user.id, session.user.userId),
-      with: {
-        config: true,
-        usersToGroups: canViewGroups
-          ? {
-            with: {
-              group: {
-                with: {
-                  groupsToRoles: canViewRoles
-                    ? { with: { role: true } }
-                    : undefined,
-                },
-              },
-            },
-          }
-          : undefined,
-        usersToRoles: canViewRoles
-          ? { with: { role: true } }
-          : undefined,
-      },
+  const users: SafeUser[] =
+    (await safeOtherUsersQuery.execute({ currentUserId: session.user.userId }))
+      .map(e => toSafeUser(e));
+
+  if (!perms.canViewGroups) {
+    users.map(e => {
+      const res = e;
+      res.groups = [];
+      return res;
     });
   }
 
-  return { canViewUsers, canCreateUsers, canViewRoles, users };
+  if (!perms.canViewRoles) {
+    users.map(e => {
+      const res = e;
+
+      res.allRoles = [];
+      res.directRoles = [];
+
+      res.groups = res.groups.map(g => {
+        const resGroup = g;
+        resGroup.roles = [];
+        return resGroup;
+      });
+
+      return res;
+    });
+  }
+
+  return { perms, users };
 };

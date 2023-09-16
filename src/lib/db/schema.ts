@@ -1,5 +1,12 @@
 import {
-  pgTable, bigint, varchar, boolean, text, uuid, primaryKey,
+  pgTable,
+  bigint,
+  varchar,
+  boolean,
+  text,
+  uuid,
+  primaryKey,
+  index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -7,7 +14,8 @@ export const user = pgTable('auth_user', {
   id: varchar('id', { length: 15 }).primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   verified: boolean('verified').default(false).notNull(),
-});
+  deleted: boolean('deleted').default(false).notNull(),
+}, table => ({ deletedIndex: index('user_deleted_index').on(table.deleted) }));
 
 export const session = pgTable('user_session', {
   id: varchar('id', { length: 128 }).primaryKey(),
@@ -50,31 +58,41 @@ export const userConfig = pgTable('user_config', {
 
 export const group = pgTable('group', {
   id: uuid('id').primaryKey().defaultRandom(),
+  deleted: boolean('deleted').default(false).notNull(),
   name: varchar('name', { length: 32 }).notNull(),
   description: text('description'),
-});
+}, table => ({ deletedIndex: index('group_deleted_index').on(table.deleted) }));
 
 export const permission = pgTable('permission', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).unique().notNull(),
+  name: varchar('name', { length: 64 }).primaryKey(),
   description: text('description'),
 });
 
-export const role = pgTable('role', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).unique().notNull(),
-  description: text('description'),
-});
+export const role = pgTable(
+  'role',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    deleted: boolean('deleted').default(false).notNull(),
+    protected: boolean('protected').default(false).notNull(),
+    name: varchar('name', { length: 255 }).unique().notNull(),
+    description: text('description'),
+  },
+  table => ({
+    deletedIndex: index('role_deleted_index').on(table.deleted),
+    protectedIndex: index('role_protected_index').on(table.protected),
+    nameIndex: index('role_name_index').on(table.name),
+  }),
+);
 
 // Intermediate tables
 
 export const permissionsToRoles = pgTable(
   'permissions_to_roles',
   {
-    permissionId: uuid('permission_id').notNull().references(() => permission.id),
+    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
     roleId: uuid('role_id').notNull().references(() => role.id),
   },
-  t => ({ pk: primaryKey(t.permissionId, t.roleId) }),
+  t => ({ pk: primaryKey(t.permissionName, t.roleId) }),
 );
 
 export const usersToRoles = pgTable(
@@ -90,9 +108,9 @@ export const usersToPermissions = pgTable(
   'users_to_permissions',
   {
     userId: varchar('user_id', { length: 15 }).notNull().references(() => user.id),
-    permissionId: uuid('permission_id').notNull().references(() => permission.id),
+    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
   },
-  t => ({ pk: primaryKey(t.permissionId, t.userId) }),
+  t => ({ pk: primaryKey(t.permissionName, t.userId) }),
 );
 
 export const usersToGroups = pgTable(
@@ -117,9 +135,9 @@ export const groupsToPermissions = pgTable(
   'groups_to_permissions',
   {
     groupId: uuid('group_id').notNull().references(() => group.id),
-    permissionId: uuid('permission_id').notNull().references(() => permission.id),
+    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
   },
-  t => ({ pk: primaryKey(t.permissionId, t.groupId) }),
+  t => ({ pk: primaryKey(t.permissionName, t.groupId) }),
 );
 
 // Relations
@@ -137,11 +155,13 @@ export const userRelations = relations(user, ({ one, many }) => ({
 export const roleRelations = relations(role, ({ many }) => ({
   permissionsToRoles: many(permissionsToRoles),
   usersToRoles: many(usersToRoles),
+  groupsToRoles: many(groupsToRoles),
 }));
 
 export const permissionRelations = relations(permission, ({ many }) => ({
   permissionsToRoles: many(permissionsToRoles),
   usersToPermissions: many(usersToPermissions),
+  groupsToPermissions: many(groupsToPermissions),
 }));
 
 export const groupsRelations = relations(group, ({ many }) => ({
@@ -156,8 +176,8 @@ export const permissionsToRolesRelations = relations(permissionsToRoles, ({ one 
     references: [role.id],
   }),
   permission: one(permission, {
-    fields: [permissionsToRoles.permissionId],
-    references: [permission.id],
+    fields: [permissionsToRoles.permissionName],
+    references: [permission.name],
   }),
 }));
 
@@ -167,8 +187,8 @@ export const usersToPermissionsRelations = relations(usersToPermissions, ({ one 
     references: [user.id],
   }),
   permission: one(permission, {
-    fields: [usersToPermissions.permissionId],
-    references: [permission.id],
+    fields: [usersToPermissions.permissionName],
+    references: [permission.name],
   }),
 }));
 
@@ -200,8 +220,8 @@ export const groupsToPermissionsRelations = relations(groupsToPermissions, ({ on
     references: [group.id],
   }),
   permission: one(permission, {
-    fields: [groupsToPermissions.permissionId],
-    references: [permission.id],
+    fields: [groupsToPermissions.permissionName],
+    references: [permission.name],
   }),
 }));
 

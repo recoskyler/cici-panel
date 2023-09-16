@@ -32,6 +32,10 @@ export const load: PageServerLoad = async event => {
     throw error(429, 'rate-limiter.too-fast-error');
   }
 
+  if (session.user.deleted) {
+    return error(404, 'auth.user-not-found');
+  }
+
   try {
     const token = await generateEmailVerificationToken(session.user.userId);
 

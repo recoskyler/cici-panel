@@ -17,15 +17,15 @@ import * as zxcvbnCommonPackage from '@zxcvbn-ts/language-common';
 import * as zxcvbnEnPackage from '@zxcvbn-ts/language-en';
 
 export const isDisplayNameValid = (displayname: string) =>
-    displayname.trim().length >= MIN_DISPLAY_NAME_LENGTH &&
+  displayname.trim().length >= MIN_DISPLAY_NAME_LENGTH &&
     displayname.trim().length <= MAX_DISPLAY_NAME_LENGTH;
 
 export const isFirstNameValid = (firstname: string) =>
-    firstname.trim().length >= MIN_FIRST_NAME_LENGTH &&
+  firstname.trim().length >= MIN_FIRST_NAME_LENGTH &&
     firstname.trim().length <= MAX_FIRST_NAME_LENGTH;
 
 export const isLastNameValid = (lastname: string) =>
-    lastname.trim().length >= MIN_LAST_NAME_LENGTH &&
+  lastname.trim().length >= MIN_LAST_NAME_LENGTH &&
     lastname.trim().length <= MAX_LAST_NAME_LENGTH;
 
 export const isEmailValid = (email: string) =>
@@ -56,16 +56,16 @@ export const isMobileNumberValid = (mobile: string) =>
   );
 
 export const isValid = (
-    displayname: string,
-    firstname: string,
-    lastname: string,
+  displayname: string,
+  firstname: string,
+  lastname: string,
   email: string,
   mobile: string,
   password: string,
 ) => (
-    isDisplayNameValid(displayname) &&
-    isFirstNameValid(firstname) &&
-    isLastNameValid(lastname) &&
+  isDisplayNameValid(displayname) &&
+  isFirstNameValid(firstname) &&
+  isLastNameValid(lastname) &&
   isPasswordValid(password) &&
   isMobileNumberValid(mobile) &&
   isEmailValid(email)

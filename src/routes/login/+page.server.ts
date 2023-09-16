@@ -7,6 +7,7 @@ import {
   ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
 import { signInLimiter } from '$lib/server/limiter';
+import { minUserQuery } from '$lib/server/queries';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -54,6 +55,13 @@ export const actions: Actions = {
 
     try {
       const key = await auth.useKey('email', form.data.email.trim(), form.data.password);
+
+      const dbUser = await minUserQuery.execute({ id: key.userId });
+
+      if (!dbUser || dbUser.deleted) {
+        throw new Error('This user has been marked as deleted');
+      }
+
       const session = await auth.createSession({ userId: key.userId, attributes: {} });
 
       locals.auth.setSession(session);

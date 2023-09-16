@@ -1,5 +1,6 @@
 <script lang="ts">
   import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '$lib/constants';
+  import { _ } from 'svelte-i18n';
 
   export let password: string;
 
@@ -13,8 +14,10 @@
   const containsSpecial = (password: string) => /(?=.*\W)/.test(password);
 </script>
 
-<div class="card p-4 variant-filled" data-popup="popupFocusBlur">
-  <p><strong>Password recommendations:</strong></p>
+<div class="card p-4 variant-filled max-w-xs z-50" data-popup="popupFocusBlur">
+  <p><strong>{$_('password-recommendations')}</strong></p>
+  <br />
+  <p>{$_('password-popup-info')}</p>
   <br />
 
   <ul>
@@ -25,10 +28,10 @@
           ? 'text-green-400 dark:text-green-700'
           : 'text-red-400 dark:text-red-700'}
     >
-      <span class="text-sm"
-        >{password.length === 0 || !isLengthValid(password) ? '❌' : '🟢'}
+      <span class="text-sm">
+        {password.length === 0 || !isLengthValid(password) ? '❌' : '🟢'}
       </span>
-      Minimum 8, maximum 64 characters long
+      {$_('password-min-max-long', { values: { min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH } })}
     </li>
 
     <li
@@ -38,10 +41,10 @@
           ? 'text-green-400 dark:text-green-700'
           : 'text-red-400 dark:text-red-700'}
     >
-      <span class="text-sm"
-        >{password.length === 0 || !containsLowercase(password) ? '❌' : '🟢'}
+      <span class="text-sm">
+        {password.length === 0 || !containsLowercase(password) ? '❌' : '🟢'}
       </span>
-      Minimum 1 lowercase letter (a-z)
+      {$_('minimum-1-lowercase-letter-a-z')}
     </li>
 
     <li
@@ -51,10 +54,10 @@
           ? 'text-green-400 dark:text-green-700'
           : 'text-red-400 dark:text-red-700'}
     >
-      <span class="text-sm"
-        >{password.length === 0 || !containsUppercase(password) ? '❌' : '🟢'}
+      <span class="text-sm">
+        {password.length === 0 || !containsUppercase(password) ? '❌' : '🟢'}
       </span>
-      Minimum 1 uppercase letter (A-Z)
+      {$_('minimum-1-uppercase-letter-a-z')}
     </li>
 
     <li
@@ -64,10 +67,10 @@
           ? 'text-green-400 dark:text-green-700'
           : 'text-red-400 dark:text-red-700'}
     >
-      <span class="text-sm"
-        >{password.length === 0 || !containsNumber(password) ? '❌' : '🟢'}
+      <span class="text-sm">
+        {password.length === 0 || !containsNumber(password) ? '❌' : '🟢'}
       </span>
-      Minimum 1 number (0-9)
+      {$_('minimum-1-number-0-9')}
     </li>
 
     <li
@@ -77,10 +80,10 @@
           ? 'text-green-400 dark:text-green-700'
           : 'text-red-400 dark:text-red-700'}
     >
-      <span class="text-sm"
-        >{password.length === 0 || !containsSpecial(password) ? '❌' : '🟢'}
+      <span class="text-sm">
+        {password.length === 0 || !containsSpecial(password) ? '❌' : '🟢'}
       </span>
-      Minimum 1 special character (!@#$...)
+      {$_('minimum-1-special-character')}
     </li>
   </ul>
 

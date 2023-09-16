@@ -151,7 +151,7 @@
       <h4 class="h4">
         <strong>
           {data.user.config.firstname}
-          {data.user.config.lastname}
+          {data.user.config.lastname ?? ''}
         </strong>
 
         ({data.user.config.displayname})
@@ -178,424 +178,401 @@
   </form>
 
   <Accordion class="mt-10" autocollapse>
-    <AccordionItem>
-      <svelte:fragment slot="lead">
-        <Fa fw icon={faIdBadge} />
-      </svelte:fragment>
+    {#if data.userPerms.canChangeDetails}
+      <AccordionItem>
+        <svelte:fragment slot="lead">
+          <Fa fw icon={faIdBadge} />
+        </svelte:fragment>
 
-      <svelte:fragment slot="summary">{$_('change-details')}</svelte:fragment>
+        <svelte:fragment slot="summary">{$_('change-details')}</svelte:fragment>
 
-      <svelte:fragment slot="content">
-        <form use:cnEnhance action="?/changeName" method="post">
-          <label for="displayname" class="label mb-2">
-            <span>{$_('auth.display-name')}*</span>
+        <svelte:fragment slot="content">
+          <form use:cnEnhance action="?/changeUserConfig" method="post">
+            <label for="displayname" class="label mb-2">
+              <span>{$_('auth.display-name')}*</span>
 
-            <input
-              id="displayname"
-              name="displayname"
-              type="text"
-              class="input"
-              title={$_('auth.display-name')}
-              placeholder={$_('auth.display-name-placeholder')}
-              disabled={$cnDelayed}
-              bind:value={$cnForm.displayname}
-              {...$cnConstraints.displayname}
-            /><br />
-
-            {#if $cnErrors.displayname}<FormError
-                error={$cnErrors.displayname}
-              />{/if}
-          </label>
-
-          <label for="firstname" class="label mb-2">
-            <span>{$_('auth.first-name')}*</span>
-
-            <input
-              id="firstname"
-              name="firstname"
-              type="text"
-              class="input"
-              title={$_('auth.first-name')}
-              placeholder={$_('auth.first-name-placeholder')}
-              disabled={$cnDelayed}
-              bind:value={$cnForm.firstname}
-              {...$cnConstraints.firstname}
-            /><br />
-
-            {#if $cnErrors.firstname}<FormError
-                error={$cnErrors.firstname}
-              />{/if}
-          </label>
-
-          <label for="lastname" class="label mb-2">
-            <span>{$_('auth.last-name')}</span>
-
-            <input
-              id="lastname"
-              name="lastname"
-              type="text"
-              class="input"
-              title={$_('auth.last-name')}
-              placeholder={$_('auth.last-name-placeholder')}
-              disabled={$cnDelayed}
-              bind:value={$cnForm.lastname}
-              {...$cnConstraints.lastname}
-            /><br />
-
-            {#if $cnErrors.lastname}<FormError
-                error={$cnErrors.lastname}
-              />{/if}
-          </label>
-
-          <label for="mobile" class="label mb-2">
-            <span>{$_('auth.mobile')}</span>
-
-            <input
-              id="mobile"
-              name="mobile"
-              type="tel"
-              class="input"
-              title={$_('auth.mobile')}
-              placeholder={$_('auth.mobile-placeholder')}
-              disabled={$cnDelayed}
-              bind:value={$cnForm.mobile}
-              {...$cnConstraints.mobile}
-            /><br />
-
-            {#if $cnErrors.mobile}<FormError error={$cnErrors.mobile} />{/if}
-          </label>
-
-          {#if $cnErrors._errors}
-            <FormError error={$cnErrors._errors} />
-          {/if}
-
-          {#if $cnMessage}
-            <FormSuccess message={$cnMessage} />
-          {/if}
-
-          <FieldsRequiredInfo />
-
-          <input
-            type="submit"
-            value={$cnDelayed ? $_('saving') : $_('save')}
-            class={`btn mt-5 w-full ${
-              $cnDelayed ? 'variant-filled-surface' : 'variant-filled'
-            }`}
-            disabled={$cnDelayed}
-          />
-        </form>
-      </svelte:fragment>
-    </AccordionItem>
-
-    <AccordionItem>
-      <svelte:fragment slot="lead">
-        <Fa fw icon={faEnvelope} />
-      </svelte:fragment>
-
-      <svelte:fragment slot="summary">Change email</svelte:fragment>
-
-      <svelte:fragment slot="content">
-        <form use:ceEnhance action="?/changeEmail" method="post">
-          <label class="label mb-3 mt-5">
-            <span>{ $_('auth.current-password') }*</span>
-
-            <div class="input-group input-group-divider grid-cols-[1fr_auto]">
               <input
-                name="password"
+                id="displayname"
+                name="displayname"
+                type="text"
                 class="input"
-                type={ceCurrentPwVisible ? 'text' : 'password'}
-                aria-label={$_('auth.current-password')}
-                placeholder={$_('auth.current-password-placeholder')}
+                title={$_('auth.display-name')}
+                placeholder={$_('auth.display-name-placeholder')}
+                disabled={$cnDelayed}
+                bind:value={$cnForm.displayname}
+                {...$cnConstraints.displayname}
+              /><br />
+
+              {#if $cnErrors.displayname}<FormError
+                  error={$cnErrors.displayname}
+                />{/if}
+            </label>
+
+            <label for="firstname" class="label mb-2">
+              <span>{$_('auth.first-name')}*</span>
+
+              <input
+                id="firstname"
+                name="firstname"
+                type="text"
+                class="input"
+                title={$_('auth.first-name')}
+                placeholder={$_('auth.first-name-placeholder')}
+                disabled={$cnDelayed}
+                bind:value={$cnForm.firstname}
+                {...$cnConstraints.firstname}
+              /><br />
+
+              {#if $cnErrors.firstname}<FormError
+                  error={$cnErrors.firstname}
+                />{/if}
+            </label>
+
+            <label for="lastname" class="label mb-2">
+              <span>{$_('auth.last-name')}</span>
+
+              <input
+                id="lastname"
+                name="lastname"
+                type="text"
+                class="input"
+                title={$_('auth.last-name')}
+                placeholder={$_('auth.last-name-placeholder')}
+                disabled={$cnDelayed}
+                bind:value={$cnForm.lastname}
+                {...$cnConstraints.lastname}
+              /><br />
+
+              {#if $cnErrors.lastname}<FormError
+                  error={$cnErrors.lastname}
+                />{/if}
+            </label>
+
+            <label for="mobile" class="label mb-2">
+              <span>{$_('auth.mobile')}</span>
+
+              <input
+                id="mobile"
+                name="mobile"
+                type="tel"
+                class="input"
+                title={$_('auth.mobile')}
+                placeholder={$_('auth.mobile-placeholder')}
+                disabled={$cnDelayed}
+                bind:value={$cnForm.mobile}
+                {...$cnConstraints.mobile}
+              /><br />
+
+              {#if $cnErrors.mobile}<FormError error={$cnErrors.mobile} />{/if}
+            </label>
+
+            {#if $cnErrors._errors}
+              <FormError error={$cnErrors._errors} />
+            {/if}
+
+            {#if $cnMessage}
+              <FormSuccess message={$cnMessage} />
+            {/if}
+
+            <FieldsRequiredInfo />
+
+            <input
+              type="submit"
+              value={$cnDelayed ? $_('saving') : $_('save')}
+              class={`btn mt-5 w-full ${
+                $cnDelayed ? 'variant-filled-surface' : 'variant-filled'
+              }`}
+              disabled={$cnDelayed}
+            />
+          </form>
+        </svelte:fragment>
+      </AccordionItem>
+    {/if}
+
+    {#if data.userPerms.canChangeEmail}
+      <AccordionItem>
+        <svelte:fragment slot="lead">
+          <Fa fw icon={faEnvelope} />
+        </svelte:fragment>
+
+        <svelte:fragment slot="summary">{$_('change-email')}</svelte:fragment>
+
+        <svelte:fragment slot="content">
+          <form use:ceEnhance action="?/changeEmail" method="post">
+            <label class="label mb-3 mt-5">
+              <span>{$_('auth.current-password')}*</span>
+
+              <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+                <input
+                  name="password"
+                  class="input"
+                  type={ceCurrentPwVisible ? 'text' : 'password'}
+                  aria-label={$_('auth.current-password')}
+                  placeholder={$_('auth.current-password-placeholder')}
+                  disabled={$ceDelayed}
+                  value={$ceForm.password}
+                  on:input={handleCECurrentPasswordInput}
+                  {...$ceConstraints.password}
+                />
+
+                <button
+                  on:click={e => {
+                    e.preventDefault();
+                    ceCurrentPwVisible = !ceCurrentPwVisible;
+                  }}
+                  type="button"
+                  class="flex items-center justify-center"
+                >
+                  <Fa fw icon={ceCurrentPwVisible ? faEye : faEyeSlash} />
+                </button>
+              </div>
+
+              {#if $ceErrors.password}
+                <FormError error={$ceErrors.password} />
+              {/if}
+            </label>
+
+            <label class="label">
+              <span>{$_('new-email')}*</span>
+
+              <input
+                name="email"
+                class="input"
+                type="email"
+                placeholder={$_('auth.email-placeholder')}
+                aria-label={$_('auth.email')}
                 disabled={$ceDelayed}
-                value={$ceForm.password}
-                on:input={handleCECurrentPasswordInput}
-                {...$ceConstraints.password}
+                bind:value={$ceForm.email}
+                {...$ceConstraints.email}
               />
 
-              <button
-                on:click={e => {
-                  e.preventDefault();
-                  ceCurrentPwVisible = !ceCurrentPwVisible;
-                }}
-                type="button"
-                class="flex items-center justify-center"
-              >
-                <Fa fw icon={ceCurrentPwVisible ? faEye : faEyeSlash} />
-              </button>
-            </div>
+              {#if $ceErrors.email}
+                <FormError error={$ceErrors.email} />
+              {/if}
+            </label>
 
-            {#if $ceErrors.password}
-              <FormError error={$ceErrors.password} />
+            {#if $ceErrors._errors}
+              <FormError error={$ceErrors._errors} />
             {/if}
-          </label>
 
-          <label class="label">
-            <span>{ $_('new-email') }*</span>
+            {#if $ceMessage}
+              <FormSuccess message={$ceMessage} />
+            {/if}
+
+            <FieldsRequiredInfo />
 
             <input
-              name="email"
-              class="input"
-              type="email"
-              placeholder={ $_('auth.email-placeholder') }
-              aria-label={ $_('auth.email') }
+              type="submit"
+              value={$ceDelayed ? $_('saving') : $_('change-email')}
+              class={`btn mt-5 w-full ${
+                $ceDelayed ? 'variant-filled-surface' : 'variant-filled'
+              }`}
               disabled={$ceDelayed}
-              bind:value={$ceForm.email}
-              {...$ceConstraints.email}
             />
+          </form>
+        </svelte:fragment>
+      </AccordionItem>
+    {/if}
 
-            {#if $ceErrors.email}
-              <FormError error={$ceErrors.email} />
-            {/if}
-          </label>
+    {#if data.userPerms.canChangePassword}
+      <AccordionItem>
+        <svelte:fragment slot="lead">
+          <Fa fw icon={faKey} />
+        </svelte:fragment>
 
-          {#if $ceErrors._errors}
-            <FormError error={$ceErrors._errors} />
-          {/if}
-
-          {#if $ceMessage}
-            <FormSuccess message={$ceMessage} />
-          {/if}
-
-          <FieldsRequiredInfo />
-
-          <input
-            type="submit"
-            value={$ceDelayed ? $_('saving') : $_('change-email')}
-            class={`btn mt-5 w-full ${
-              $ceDelayed ? 'variant-filled-surface' : 'variant-filled'
-            }`}
-            disabled={$ceDelayed}
-          />
-        </form>
-      </svelte:fragment>
-    </AccordionItem>
-
-    <AccordionItem>
-      <svelte:fragment slot="lead">
-        <Fa fw icon={faKey} />
-      </svelte:fragment>
-
-      <svelte:fragment slot="summary">{ $_('change-password') }</svelte:fragment>
-
-      <svelte:fragment slot="content">
-        <form use:cpEnhance action="?/changePassword" method="post">
-          <label class="label mb-3 mt-5">
-            <span>{$_('auth.current-password')}*</span>
-
-            <div class="input-group input-group-divider grid-cols-[1fr_auto]">
-              <input
-                name="currentPassword"
-                class="input"
-                type={cpCurrentPwVisible ? 'text' : 'password'}
-                aria-label={$_('auth.current-password')}
-                placeholder={$_('auth.current-password-placeholder')}
-                disabled={$cpDelayed}
-                value={$cpForm.currentPassword}
-                on:input={handleCPCurrentPasswordInput}
-                {...$cpConstraints.currentPassword}
-              />
-
-              <button
-                on:click={e => {
-                  e.preventDefault();
-                  cpCurrentPwVisible = !cpCurrentPwVisible;
-                }}
-                type="button"
-                class="flex items-center justify-center"
-              >
-                <Fa fw icon={cpCurrentPwVisible ? faEye : faEyeSlash} />
-              </button>
-            </div>
-
-            {#if $cpErrors.currentPassword}
-              <FormError error={$cpErrors.currentPassword} />
-            {/if}
-          </label>
-
-          <PasswordPopup password={$cpForm.password} />
-
-          <label class="label">
-            <span>{$_('auth.new-password')}*</span>
-
-            <div class="input-group input-group-divider grid-cols-[1fr_auto]">
-              <input
-                name="password"
-                class="input"
-                type={cpNewPwVisible ? 'text' : 'password'}
-                placeholder={$_('auth.new-password-placeholder')}
-                disabled={$cpDelayed}
-                value={$cpForm.password}
-                use:popup={passwordPopupFocusBlur}
-                on:input={handleCPNewPasswordInput}
-                {...$cpConstraints.password}
-              />
-
-              <button
-                on:click={e => {
-                  e.preventDefault();
-                  cpNewPwVisible = !cpNewPwVisible;
-                }}
-                type="button"
-                class="flex items-center justify-center"
-              >
-                <Fa fw icon={cpNewPwVisible ? faEye : faEyeSlash} />
-              </button>
-            </div>
-
-            {#if $cpErrors.password}
-              <FormError error={$cpErrors.password} />
-            {/if}
-          </label>
-
-          <PasswordStrengthMeter password={$cpForm.password} />
-
-          {#if $cpErrors._errors}
-            <FormError error={$cpErrors._errors} />
-          {/if}
-
-          {#if $cpMessage}
-            <FormSuccess message={$cpMessage} />
-          {/if}
-
-          <FieldsRequiredInfo />
-
-          <input
-            type="submit"
-            value={$cpDelayed ? $_('saving') : $_('change-password')}
-            class={`btn mt-5 w-full ${
-              $cpDelayed ? 'variant-filled-surface' : 'variant-filled'
-            }`}
-            disabled={$cpDelayed}
-          />
-        </form>
-      </svelte:fragment>
-    </AccordionItem>
-
-    <!-- <AccordionItem>
-      <svelte:fragment slot="lead">
-        <Fa fw icon={faChartSimple} />
-      </svelte:fragment>
-
-      <svelte:fragment slot="summary">Analytics</svelte:fragment>
-
-      <svelte:fragment slot="content">
-        <p>
-          <span class="text-orange-600 dark:text-orange-400"
-            ><strong>WARNING: </strong></span
-          >
-          This setting is stored in a cookie. When you sign out, clear the browser
-          cookies, or block cookies it will be reset to its default state (<strong
-            >Disabled</strong
-          >)
-        </p>
-
-        <SlideToggle
-          name="enabled"
-          bind:checked={analyticsEnabled}
-          on:change={toggleAnalytics}
-          bgDark="bg-surface-400"
-          class="my-3"
+        <svelte:fragment slot="summary">{$_('change-password')}</svelte:fragment
         >
-          Enable analytics?
-        </SlideToggle>
 
-        <p>
-          <strong>Please refresh the page after changing this option</strong>
-        </p>
-      </svelte:fragment>
-    </AccordionItem> -->
+        <svelte:fragment slot="content">
+          <form use:cpEnhance action="?/changePassword" method="post">
+            <label class="label mb-3 mt-5">
+              <span>{$_('auth.current-password')}*</span>
 
-    <AccordionItem>
-      <svelte:fragment slot="lead">
-        <Fa fw icon={faTrash} class="text-red-600 dark:text-red-400" />
-      </svelte:fragment>
+              <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+                <input
+                  name="currentPassword"
+                  class="input"
+                  type={cpCurrentPwVisible ? 'text' : 'password'}
+                  aria-label={$_('auth.current-password')}
+                  placeholder={$_('auth.current-password-placeholder')}
+                  disabled={$cpDelayed}
+                  value={$cpForm.currentPassword}
+                  on:input={handleCPCurrentPasswordInput}
+                  {...$cpConstraints.currentPassword}
+                />
 
-      <svelte:fragment slot="summary">
-        <span class="text-red-600 dark:text-red-400">{ $_('delete-account') }</span>
-      </svelte:fragment>
+                <button
+                  on:click={e => {
+                    e.preventDefault();
+                    cpCurrentPwVisible = !cpCurrentPwVisible;
+                  }}
+                  type="button"
+                  class="flex items-center justify-center"
+                >
+                  <Fa fw icon={cpCurrentPwVisible ? faEye : faEyeSlash} />
+                </button>
+              </div>
 
-      <svelte:fragment slot="content">
-        <p>
-          <span class="text-orange-600 dark:text-orange-400">
-            <strong>{ $_('warning') } </strong>
-          </span>
+              {#if $cpErrors.currentPassword}
+                <FormError error={$cpErrors.currentPassword} />
+              {/if}
+            </label>
 
-          { $_('delete-account-warning') }
-        </p>
+            <PasswordPopup password={$cpForm.password} />
 
-        <form use:daEnhance method="post" action="?/delete">
-          <label class="label mb-3 mt-5">
-            <span>{$_('auth.current-password')}*</span>
+            <label class="label">
+              <span>{$_('auth.new-password')}*</span>
 
-            <div class="input-group input-group-divider grid-cols-[1fr_auto]">
-              <input
-                name="password"
-                class="input"
-                type={daCurrentPwVisible ? 'text' : 'password'}
-                aria-label={$_('auth.current-password')}
-                placeholder={$_('auth.current-password-placeholder')}
-                disabled={$daDelayed}
-                value={$daForm.password}
-                on:input={handleDACurrentPasswordInput}
-                {...$daConstraints.password}
-              />
+              <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+                <input
+                  name="password"
+                  class="input"
+                  type={cpNewPwVisible ? 'text' : 'password'}
+                  placeholder={$_('auth.new-password-placeholder')}
+                  disabled={$cpDelayed}
+                  value={$cpForm.password}
+                  use:popup={passwordPopupFocusBlur}
+                  on:input={handleCPNewPasswordInput}
+                  {...$cpConstraints.password}
+                />
 
-              <button
-                on:click={e => {
-                  e.preventDefault();
-                  daCurrentPwVisible = !daCurrentPwVisible;
-                }}
-                type="button"
-                class="flex items-center justify-center"
-              >
-                <Fa fw icon={daCurrentPwVisible ? faEye : faEyeSlash} />
-              </button>
-            </div>
+                <button
+                  on:click={e => {
+                    e.preventDefault();
+                    cpNewPwVisible = !cpNewPwVisible;
+                  }}
+                  type="button"
+                  class="flex items-center justify-center"
+                >
+                  <Fa fw icon={cpNewPwVisible ? faEye : faEyeSlash} />
+                </button>
+              </div>
 
-            {#if $daErrors.password}
-              <FormError error={$daErrors.password} />
+              {#if $cpErrors.password}
+                <FormError error={$cpErrors.password} />
+              {/if}
+            </label>
+
+            <PasswordStrengthMeter password={$cpForm.password} />
+
+            {#if $cpErrors._errors}
+              <FormError error={$cpErrors._errors} />
             {/if}
-          </label>
 
-          <label class="label mb-3 mt-5">
-            <span>{$_('confirmation')}*</span>
+            {#if $cpMessage}
+              <FormSuccess message={$cpMessage} />
+            {/if}
+
+            <FieldsRequiredInfo />
 
             <input
-              name="confirmation"
-              class="input"
-              type="text"
-              placeholder="Delete"
-              disabled={$daDelayed}
-              bind:value={$daForm.confirmation}
-              {...$daConstraints.confirmation}
+              type="submit"
+              value={$cpDelayed ? $_('saving') : $_('change-password')}
+              class={`btn mt-5 w-full ${
+                $cpDelayed ? 'variant-filled-surface' : 'variant-filled'
+              }`}
+              disabled={$cpDelayed}
             />
+          </form>
+        </svelte:fragment>
+      </AccordionItem>
+    {/if}
 
-            {#if $daErrors.confirmation}
-              <FormError error={$daErrors.confirmation} />
+    {#if data.userPerms.canDeleteAccount}
+      <AccordionItem>
+        <svelte:fragment slot="lead">
+          <Fa fw icon={faTrash} class="text-red-600 dark:text-red-400" />
+        </svelte:fragment>
+
+        <svelte:fragment slot="summary">
+          <span class="text-red-600 dark:text-red-400"
+            >{$_('delete-account')}</span
+          >
+        </svelte:fragment>
+
+        <svelte:fragment slot="content">
+          <p>
+            <span class="text-orange-600 dark:text-orange-400">
+              <strong>{$_('warning')} </strong>
+            </span>
+
+            {$_('delete-account-warning')}
+          </p>
+
+          <form use:daEnhance method="post" action="?/delete">
+            <label class="label mb-3 mt-5">
+              <span>{$_('auth.current-password')}*</span>
+
+              <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+                <input
+                  name="password"
+                  class="input"
+                  type={daCurrentPwVisible ? 'text' : 'password'}
+                  aria-label={$_('auth.current-password')}
+                  placeholder={$_('auth.current-password-placeholder')}
+                  disabled={$daDelayed}
+                  value={$daForm.password}
+                  on:input={handleDACurrentPasswordInput}
+                  {...$daConstraints.password}
+                />
+
+                <button
+                  on:click={e => {
+                    e.preventDefault();
+                    daCurrentPwVisible = !daCurrentPwVisible;
+                  }}
+                  type="button"
+                  class="flex items-center justify-center"
+                >
+                  <Fa fw icon={daCurrentPwVisible ? faEye : faEyeSlash} />
+                </button>
+              </div>
+
+              {#if $daErrors.password}
+                <FormError error={$daErrors.password} />
+              {/if}
+            </label>
+
+            <label class="label mb-3 mt-5">
+              <span>{$_('confirmation')}*</span>
+
+              <input
+                name="confirmation"
+                class="input"
+                type="text"
+                placeholder="Delete"
+                disabled={$daDelayed}
+                bind:value={$daForm.confirmation}
+                {...$daConstraints.confirmation}
+              />
+
+              {#if $daErrors.confirmation}
+                <FormError error={$daErrors.confirmation} />
+              {/if}
+            </label>
+
+            {#if $daErrors._errors}
+              <FormError error={$daErrors._errors} />
             {/if}
-          </label>
 
-          {#if $daErrors._errors}
-            <FormError error={$daErrors._errors} />
-          {/if}
+            {#if $daMessage}
+              <FormSuccess message={$daMessage} />
+            {/if}
 
-          {#if $daMessage}
-            <FormSuccess message={$daMessage} />
-          {/if}
+            <FieldsRequiredInfo />
 
-          <FieldsRequiredInfo />
-
-          <input
-            type="submit"
-            value={$daDelayed ? $_('exterminating') : $_('delete-account')}
-            class={`btn mt-5 w-full ${
-              $daDelayed ? 'variant-filled-surface' : 'variant-filled-error'
-            }`}
-            disabled={$daDelayed}
-          />
-        </form>
-      </svelte:fragment>
-    </AccordionItem>
+            <input
+              type="submit"
+              value={$daDelayed ? $_('exterminating') : $_('delete-account')}
+              class={`btn mt-5 w-full ${
+                $daDelayed ? 'variant-filled-surface' : 'variant-filled-error'
+              }`}
+              disabled={$daDelayed}
+            />
+          </form>
+        </svelte:fragment>
+      </AccordionItem>
+    {/if}
   </Accordion>
 
   {#if ENABLE_THEMES}
@@ -604,11 +581,10 @@
     </div>
   {/if}
 
-  <!-- eslint-disable max-len -->
   <div
-    class="flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 mt-10 py-2 px-5 bg-surface-200 dark:bg-surface-200 rounded-lg"
+    class="flex flex-row flex-wrap items-center justify-center
+    gap-x-3 gap-y-2 mt-10 py-2 px-5 bg-surface-200 dark:bg-surface-200 rounded-lg"
   >
-    <!-- eslint-enable max-len -->
     <a
       href="/privacy"
       target="_blank"

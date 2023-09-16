@@ -41,7 +41,7 @@ export const insertTokenSchema = createInsertSchema(token);
 
 export const selectTokenSchema = createSelectSchema(token);
 
-export const insertUserConfigSchema = createInsertSchema(userConfig, {
+export const innerInsertUserConfigSchema = {
   displayname: z.string().min(MIN_DISPLAY_NAME_LENGTH).max(MAX_DISPLAY_NAME_LENGTH),
   firstname: z.string().min(MIN_FIRST_NAME_LENGTH).max(MAX_FIRST_NAME_LENGTH),
   lastname: z.string().min(MIN_LAST_NAME_LENGTH).max(MAX_LAST_NAME_LENGTH).nullable().optional(),
@@ -51,7 +51,9 @@ export const insertUserConfigSchema = createInsertSchema(userConfig, {
     .refine(isMobilePhone)
     .nullable()
     .optional(),
-});
+};
+
+export const insertUserConfigSchema = createInsertSchema(userConfig, innerInsertUserConfigSchema);
 
 export const selectUserConfigSchema = createSelectSchema(userConfig);
 
@@ -84,53 +86,124 @@ export const insertGroupsToPermissionsSchema = createInsertSchema(groupsToPermis
 
 export const FullDatabaseUserSchema = selectUserSchema.extend({
   config: selectUserConfigSchema,
-  usersToRoles: z.array(z.object({
-    userId: z.string().length(15),
-    roleId: z.string().uuid(),
-    role: selectRoleSchema.extend({
-      permissionsToRoles: z.array(z.object({
-        permissionId: z.string().uuid(),
-        roleId: z.string().uuid(),
-        permission: selectPermissionSchema,
-      })).optional(),
+  usersToRoles: z.array(
+    selectUsersToRolesSchema.extend({
+      role: selectRoleSchema.extend({
+        permissionsToRoles: z.array(
+          selectPermissionsToRolesSchema.extend({ permission: selectPermissionSchema }),
+        ),
+      }),
     }),
-  })).optional(),
-  usersToPermissions: z.array(z.object({
-    userId: z.string().length(15),
-    permissionId: z.string().uuid(),
-    permission: selectPermissionSchema,
-  })).optional(),
-  usersToGroups: z.array(z.object({
-    userId: z.string().length(15),
-    groupId: z.string().uuid(),
-    group: selectGroupSchema.extend({
-      groupsToPermissions: z.array(z.object({
-        permissionId: z.string().uuid(),
-        groupId: z.string().uuid(),
-        permission: selectPermissionSchema,
-      })).optional(),
-      groupsToRoles: z.array(z.object({
-        roleId: z.string().uuid(),
-        groupId: z.string().uuid(),
-        role: selectRoleSchema.extend({
-          permissionsToRoles: z.array(z.object({
-            permissionId: z.string().uuid(),
+  ),
+  usersToPermissions: z.array(
+    selectUsersToPermissionsSchema.extend({ permission: selectPermissionSchema }),
+  ),
+  usersToGroups: z.array(
+    selectUsersToGroupsSchema.extend({
+      group: selectGroupSchema.extend({
+        groupsToPermissions: z.array(
+          selectGroupsToPermissionsSchema.extend({ permission: selectPermissionSchema }),
+        ),
+        groupsToRoles: z.array(
+          selectGroupsToRolesSchema.extend({
             roleId: z.string().uuid(),
-            permission: selectPermissionSchema,
-          })).optional(),
-        }),
-      })).optional(),
+            groupId: z.string().uuid(),
+            role: selectRoleSchema.extend({
+              permissionsToRoles: z.array(
+                selectPermissionsToRolesSchema.extend({ permission: selectPermissionSchema }),
+              ),
+            }),
+          }),
+        ),
+      }),
     }),
-  })).optional(),
+  ),
 });
 
-export const FullRoleSchema = selectRoleSchema.extend(
-  { permissions: z.array(selectPermissionSchema) },
-);
+export const SafeDatabaseUserSchema = selectUserSchema.extend({
+  config: selectUserConfigSchema,
+  usersToRoles: z.array(
+    selectUsersToRolesSchema.extend({ role: selectRoleSchema }),
+  ),
+  usersToGroups: z.array(
+    selectUsersToGroupsSchema.extend({
+      group: selectGroupSchema.extend({
+        groupsToRoles: z.array(
+          selectGroupsToRolesSchema.extend({ role: selectRoleSchema }),
+        ),
+      }),
+    }),
+  ),
+});
+
+export const MinDatabaseUserSchema = selectUserSchema.extend({ config: selectUserConfigSchema });
+
+export const FullRoleSchema = selectRoleSchema.extend({
+  permissions: z.array(selectPermissionSchema),
+  users: z.array(MinDatabaseUserSchema),
+  groups: z.array(selectGroupSchema),
+});
+
+export const SafeRoleSchema = selectRoleSchema.extend({
+  users: z.array(MinDatabaseUserSchema),
+  groups: z.array(selectGroupSchema),
+});
+
+export const FullDatabaseRoleSchema = selectRoleSchema.extend({
+  permissionsToRoles: z.array(
+    selectPermissionsToRolesSchema.extend({ permission: selectPermissionSchema }),
+  ),
+  groupsToRoles: z.array(
+    selectGroupsToRolesSchema.extend({ group: selectGroupSchema }),
+  ),
+  usersToRoles: z.array(
+    selectUsersToRolesSchema.extend({ user: MinDatabaseUserSchema }),
+  ),
+});
+
+export const SafeDatabaseRoleSchema = selectRoleSchema.extend({
+  groupsToRoles: z.array(
+    selectGroupsToRolesSchema.extend({ group: selectGroupSchema }),
+  ),
+  usersToRoles: z.array(
+    selectUsersToRolesSchema.extend({ user: MinDatabaseUserSchema }),
+  ),
+});
+
+export const FullDatabaseGroupSchema = selectGroupSchema.extend({
+  groupsToPermissions: z.array(
+    selectGroupsToPermissionsSchema.extend({ permission: selectPermissionSchema }),
+  ),
+  groupsToRoles: z.array(
+    selectGroupsToRolesSchema.extend({
+      role: selectRoleSchema.extend({
+        permissionsToRoles: z.array(
+          selectPermissionsToRolesSchema.extend({ permission: selectPermissionSchema }),
+        ),
+      }),
+    }),
+  ),
+  usersToGroups: z.array(
+    selectUsersToGroupsSchema.extend({ user: MinDatabaseUserSchema }),
+  ),
+});
+
+export const SafeDatabaseGroupSchema = selectGroupSchema.extend({
+  groupsToRoles: z.array(selectGroupsToRolesSchema.extend({ role: selectRoleSchema })),
+  usersToGroups: z.array(
+    selectUsersToGroupsSchema.extend({ user: MinDatabaseUserSchema }),
+  ),
+});
 
 export const FullGroupSchema = selectGroupSchema.extend({
   roles: z.array(FullRoleSchema),
   permissions: z.array(selectPermissionSchema),
+  users: z.array(MinDatabaseUserSchema),
+});
+
+export const SafeGroupSchema = selectGroupSchema.extend({
+  roles: z.array(selectRoleSchema),
+  users: z.array(MinDatabaseUserSchema),
 });
 
 export const FullUserSchema = selectUserSchema.extend({
@@ -140,6 +213,13 @@ export const FullUserSchema = selectUserSchema.extend({
   groups: z.array(FullGroupSchema),
   allPermissions: z.array(selectPermissionSchema),
   allRoles: z.array(FullRoleSchema),
+});
+
+export const SafeUserSchema = selectUserSchema.extend({
+  config: selectUserConfigSchema,
+  directRoles: z.array(selectRoleSchema),
+  groups: z.array(SafeGroupSchema),
+  allRoles: z.array(selectRoleSchema),
 });
 
 // Types
@@ -180,8 +260,21 @@ export type GroupsToRoles = z.infer<typeof selectGroupsToRolesSchema>;
 export type NewGroupsToPermissions = z.infer<typeof insertGroupsToPermissionsSchema>;
 export type GroupsToPermissions = z.infer<typeof selectGroupsToPermissionsSchema>;
 
+export type FullDatabaseRole = z.infer<typeof FullDatabaseRoleSchema>;
+export type SafeDatabaseRole = z.infer<typeof SafeDatabaseRoleSchema>;
+
 export type FullRole = z.infer<typeof FullRoleSchema>;
-export type FullGroup = z.infer<typeof FullGroupSchema>;
+export type SafeRole = z.infer<typeof SafeRoleSchema>;
+
 export type FullDatabaseUser = z.infer<typeof FullDatabaseUserSchema>;
+export type SafeDatabaseUser = z.infer<typeof SafeDatabaseUserSchema>;
+export type MinDatabaseUser = z.infer<typeof MinDatabaseUserSchema>;
+
+export type MinUser = z.infer<typeof MinDatabaseUserSchema>;
+export type SafeUser = z.infer<typeof SafeUserSchema>;
 export type FullUser = z.infer<typeof FullUserSchema>;
 
+export type SafeDatabaseGroup = z.infer<typeof SafeDatabaseGroupSchema>;
+export type FullDatabaseGroup = z.infer<typeof FullDatabaseGroupSchema>;
+export type SafeGroup = z.infer<typeof SafeGroupSchema>;
+export type FullGroup = z.infer<typeof FullGroupSchema>;

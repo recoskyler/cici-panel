@@ -4,7 +4,6 @@ export const SITE_PAGE = {
   HOME: 'HOME',
   PROFILE: 'PROFILE',
   MODERATION: 'MODERATION',
-  USERS: 'USERS',
 } as const;
 
 type ObjectValues<T> = T[keyof T];

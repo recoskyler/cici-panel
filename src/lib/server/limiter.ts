@@ -65,3 +65,81 @@ export const profileUpdateLimiter = new RateLimiter({
     },
   },
 });
+
+export const userUpdateLimiter = new RateLimiter({
+  rates: {
+    IP: [3, 'h'], // IP address limiter
+    IPUA: [4, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [10, 'm'],
+      preflight: true,
+    },
+  },
+});
+
+export const userCreateLimiter = new RateLimiter({
+  rates: {
+    IP: [2, 'h'], // IP address limiter
+    IPUA: [3, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [6, 'm'],
+      preflight: true,
+    },
+  },
+});
+
+export const groupUpdateLimiter = new RateLimiter({
+  rates: {
+    IP: [3, 'h'], // IP address limiter
+    IPUA: [4, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [10, 'm'],
+      preflight: true,
+    },
+  },
+});
+
+export const groupCreateLimiter = new RateLimiter({
+  rates: {
+    IP: [2, 'h'], // IP address limiter
+    IPUA: [3, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [6, 'm'],
+      preflight: true,
+    },
+  },
+});
+
+export const roleUpdateLimiter = new RateLimiter({
+  rates: {
+    IP: [3, 'h'], // IP address limiter
+    IPUA: [4, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [10, 'm'],
+      preflight: true,
+    },
+  },
+});
+
+export const roleCreateLimiter = new RateLimiter({
+  rates: {
+    IP: [2, 'h'], // IP address limiter
+    IPUA: [3, 'm'], // IP + User Agent limiter
+    cookie: {
+      name: 'cici_panel_pu_rl',
+      secret: RATE_LIMIT_SECRET,
+      rate: [6, 'm'],
+      preflight: true,
+    },
+  },
+});

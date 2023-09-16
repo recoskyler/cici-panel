@@ -18,8 +18,8 @@ import {
   PUBLIC_ENABLE_RATE_LIMIT,
   PUBLIC_ENABLE_APP_BAR_GITHUB_ICON,
   PUBLIC_GRANULAR_PERMISSIONS_PREFIX,
+  PUBLIC_PAGINATION_PER_PAGE,
 } from '$env/static/public';
-import type { GranularPermission } from './server/granular-permissions/permissions';
 
 export const MIN_PASSWORD_LENGTH = Number.parseInt(PUBLIC_MIN_PASSWORD_LENGTH);
 export const MAX_PASSWORD_LENGTH = Number.parseInt(PUBLIC_MAX_PASSWORD_LENGTH);
@@ -33,6 +33,9 @@ export const MIN_EMAIL_LENGTH = Number.parseInt(PUBLIC_MIN_EMAIL_LENGTH);
 export const MAX_EMAIL_LENGTH = Number.parseInt(PUBLIC_MAX_EMAIL_LENGTH);
 export const MIN_MOBILE_LENGTH = 5;
 export const MAX_MOBILE_LENGTH = 32;
+export const PER_PAGE = (PUBLIC_ALLOW_REGISTERS ?? '').trim() === ''
+  ? Number.parseInt(PUBLIC_PAGINATION_PER_PAGE)
+  : 25;
 
 export const ALLOW_REGISTERS =
   (PUBLIC_ALLOW_REGISTERS ?? '').trim() === ''
@@ -76,53 +79,3 @@ export const DISCLAIMER_DISMISSED_COOKIE_NAME = 'cicipanel_disclaimer-dismissed'
 
 export const GRANULAR_PERMISSIONS_PREFIX = (PUBLIC_GRANULAR_PERMISSIONS_PREFIX ?? '').trim() === ''
   ? 'granular-perms' : PUBLIC_GRANULAR_PERMISSIONS_PREFIX.trim();
-
-export const PERMISSIONS = [
-  'change-own-password',
-  'change-own-email-address',
-  'change-own-user-details',
-  'delete-own-account',
-  'create-new-user',
-  'update-other-user',
-  'read-list-other-users',
-  'delete-other-user',
-  'create-user-group',
-  'update-user-group-details',
-  'read-list-user-groups',
-  'delete-user-group',
-  'change-user-permissions',
-  'change-role-permissions',
-  'change-user-group-permissions',
-  'change-user-roles',
-  'change-user-group-roles',
-  'add-remove-user-group-members',
-  'create-role',
-  'delete-role',
-  'read-list-roles',
-  'read-list-permissions',
-] as const;
-
-export const MODERATOR_PERMISSIONS: GranularPermission[] = [
-  'create-new-user',
-  'update-other-user',
-  'read-list-other-users',
-  'delete-other-user',
-  'create-user-group',
-  'update-user-group-details',
-  'read-list-user-groups',
-  'delete-user-group',
-  'change-user-permissions',
-  'change-user-group-permissions',
-  'change-user-roles',
-  'change-user-group-roles',
-  'add-remove-user-group-members',
-  'read-list-roles',
-  'read-list-permissions',
-];
-
-export const USER_PERMISSIONS: GranularPermission[] = [
-  'change-own-password',
-  'change-own-email-address',
-  'change-own-user-details',
-  'delete-own-account',
-];

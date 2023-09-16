@@ -2,13 +2,12 @@ import { db } from '../server/drizzle';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import * as schema from '../db/schema';
 import type { NewPermission, NewRole } from './types';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { GRANULAR_PERMISSIONS_PREFIX } from '$lib/constants';
 import {
-  GRANULAR_PERMISSIONS_PREFIX,
-  MODERATOR_PERMISSIONS,
-  PERMISSIONS,
-  USER_PERMISSIONS,
-} from '$lib/constants';
+  PERMISSIONS, MODERATOR_PERMISSIONS, USER_PERMISSIONS,
+} from '$lib/server/constants';
+import { syncPermissionsToRole } from '$lib/server/granular-permissions/permissions';
 
 // Permission name must be an I18N key
 
@@ -17,9 +16,21 @@ const permissions: NewPermission[] = PERMISSIONS.map(
 );
 
 const roles: NewRole[] = [
-  { name: `${GRANULAR_PERMISSIONS_PREFIX}.administrator` },
-  { name: `${GRANULAR_PERMISSIONS_PREFIX}.moderator` },
-  { name: `${GRANULAR_PERMISSIONS_PREFIX}.user` },
+  {
+    name: 'Administrator',
+    description: 'Is a god.',
+    protected: true,
+  },
+  {
+    name: 'Moderator',
+    description: 'Can manage users, groups and their roles and permissions, but cannot create roles or manage their permissions.',
+    protected: true,
+  },
+  {
+    name: 'User',
+    description: 'A regular user. Can manage their own account.',
+    protected: true,
+  },
 ];
 
 export const seed = async () => {
@@ -37,47 +48,34 @@ export const seed = async () => {
     console.log('Seeded empty roles');
 
     const adminRole = await db.query.role.findFirst(
-      { where: eq(schema.role.name, 'granular-perms.administrator') },
+      { where: eq(schema.role.name, 'Administrator') },
     );
 
     if (adminRole) {
-      const dbAdminPerms = await db.query.permission.findMany();
-
-      await db.insert(schema.permissionsToRoles).values(
-        dbAdminPerms.map(e => ({ permissionId: e.id, roleId: adminRole.id })),
-      );
+      syncPermissionsToRole(adminRole.id, PERMISSIONS.slice());
 
       console.log('Seeded admin role permissions');
     }
 
     const moderatorRole = await db.query.role.findFirst(
-      { where: eq(schema.role.name, 'granular-perms.moderator') },
+      { where: eq(schema.role.name, 'Moderator') },
     );
 
     if (moderatorRole) {
-      const dbModeratorPerms = await db.query.permission.findMany(
-        { where: inArray(schema.permission.name, MODERATOR_PERMISSIONS.concat(USER_PERMISSIONS)) },
-      );
-
-      await db.insert(schema.permissionsToRoles).values(
-        dbModeratorPerms.map(e => ({ permissionId: e.id, roleId: moderatorRole.id })),
+      syncPermissionsToRole(
+        moderatorRole.id,
+        MODERATOR_PERMISSIONS.concat(USER_PERMISSIONS),
       );
 
       console.log('Seeded moderator role permissions');
     }
 
     const userRole = await db.query.role.findFirst(
-      { where: eq(schema.role.name, 'granular-perms.user') },
+      { where: eq(schema.role.name, 'User') },
     );
 
     if (userRole) {
-      const dbUserPerms = await db.query.permission.findMany(
-        { where: inArray(schema.permission.name, USER_PERMISSIONS) },
-      );
-
-      await db.insert(schema.permissionsToRoles).values(
-        dbUserPerms.map(e => ({ permissionId: e.id, roleId: userRole.id })),
-      );
+      syncPermissionsToRole(userRole.id, USER_PERMISSIONS);
 
       console.log('Seeded user role permissions');
     }

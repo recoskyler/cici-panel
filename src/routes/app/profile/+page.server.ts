@@ -4,7 +4,6 @@ import { type Actions, fail } from '@sveltejs/kit';
 import { auth } from '$lib/server/lucia';
 import {
   DISCLAIMER_DISMISSED_COOKIE_NAME,
-  ENABLE_EMAIL_VERIFICATION,
   MAX_EMAIL_LENGTH,
   MAX_FIRST_NAME_LENGTH,
   MAX_LAST_NAME_LENGTH,
@@ -30,8 +29,9 @@ import {
 } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { profileUpdateLimiter } from '$lib/server/limiter';
-import { currentUserFullQuery } from '$lib/server/queries';
-import { transformUser } from '$lib/server/granular-permissions/transform';
+import { fullUserQuery } from '$lib/server/queries';
+import { toFullUser } from '$lib/server/granular-permissions/transform';
+import { can } from '$lib/server/granular-permissions/permissions';
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH),
@@ -72,6 +72,16 @@ export const actions: Actions = {
 
     if (!session) return fail(401);
 
+    const dbUser = await fullUserQuery.execute({ id: session.user.userId });
+
+    if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
+
+    if (!dbUser.config) throw redirect(302, '/app/setup');
+
+    const fullUser = toFullUser(dbUser);
+
+    if (!can(fullUser, 'change-own-user-details')) throw error(403, 'forbidden');
+
     const form = await superValidate(request, deleteAccountSchema);
 
     if (!form.valid) {
@@ -85,7 +95,7 @@ export const actions: Actions = {
     }
 
     try {
-      await auth.useKey('email', session.user.email, form.data.password);
+      await auth.useKey('email', fullUser.email, form.data.password);
 
       await db.delete(userConfig).where(eq(userConfig.userId, session.user.userId));
 
@@ -124,6 +134,16 @@ export const actions: Actions = {
         'rate-limiter.too-fast-error',
       );
     }
+
+    const dbUser = await fullUserQuery.execute({ id: session.user.userId });
+
+    if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
+
+    if (!dbUser.config) throw redirect(302, '/app/setup');
+
+    const fullUser = toFullUser(dbUser);
+
+    if (!can(fullUser, 'change-own-password')) throw error(403, 'forbidden');
 
     if (!form.valid) {
       console.error('Form invalid');
@@ -172,6 +192,16 @@ export const actions: Actions = {
       );
     }
 
+    const dbUser = await fullUserQuery.execute({ id: session.user.userId });
+
+    if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
+
+    if (!dbUser.config) throw redirect(302, '/app/setup');
+
+    const fullUser = toFullUser(dbUser);
+
+    if (!can(fullUser, 'change-own-email-address')) throw error(403, 'forbidden');
+
     if (!form.valid) {
       console.error('Form invalid');
       console.error(form.errors);
@@ -191,7 +221,7 @@ export const actions: Actions = {
         userId: session.user.userId,
         password: form.data.password,
       });
-      await auth.deleteKey('email', session.user.email);
+      await auth.deleteKey('email', fullUser.email);
       await auth.updateUserAttributes(session.user.userId, { email: form.data.email.trim() });
 
       const newSession = await auth.createSession({ userId: session.user.userId, attributes: {} });
@@ -226,6 +256,16 @@ export const actions: Actions = {
       );
     }
 
+    const dbUser = await fullUserQuery.execute({ id: session.user.userId });
+
+    if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
+
+    if (!dbUser.config) throw redirect(302, '/app/setup');
+
+    const fullUser = toFullUser(dbUser);
+
+    if (!can(fullUser, 'change-own-user-details')) throw error(403, 'forbidden');
+
     if (!form.valid) {
       console.error('Form invalid');
       console.error(form.errors);
@@ -235,16 +275,14 @@ export const actions: Actions = {
     console.log('Changing user details...');
 
     try {
-      await auth.updateUserAttributes(
-        session.user.userId,
-        {
-          displayname: form.data.displayname.trim(),
-          firstname: form.data.firstname.trim(),
-          lastname: (form.data.lastname ?? '').trim(),
-          mobile: (form.data.mobile ?? '').trim(),
-        });
+      await db.update(userConfig).set({
+        displayname: form.data.displayname.trim(),
+        firstname: form.data.firstname.trim(),
+        lastname: (form.data.lastname ?? '').trim(),
+        mobile: (form.data.mobile ?? '').trim(),
+      }).where(eq(userConfig.userId, session.user.userId));
     } catch (e) {
-      console.error('Unable to change name');
+      console.error('Unable to change details');
       console.error(e);
 
       return setError(form, '', 'unable-to-save-user-details');
@@ -260,17 +298,20 @@ export const load: PageServerLoad = async event => {
   const { locals } = event;
   const session = await locals.auth.validate();
 
-  if (!session) throw redirect(302, '/login');
+  const dbUser = await fullUserQuery.execute({ id: session.user.userId });
 
-  if (ENABLE_EMAIL_VERIFICATION && !session.user.verified) {
-    throw redirect(302, '/email-verification');
-  }
-
-  const dbUser = await currentUserFullQuery.execute({ id: session.user.userId });
-
-  if (!dbUser) throw error(404, 'auth.user-not-found');
+  if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
 
   if (!dbUser.config) throw redirect(302, '/app/setup');
+
+  const fullUser = toFullUser(dbUser);
+
+  const userPerms = {
+    canChangeEmail: can(fullUser, 'change-own-email-address'),
+    canChangePassword: can(fullUser, 'change-own-password'),
+    canChangeDetails: can(fullUser, 'change-own-user-details'),
+    canDeleteAccount: can(fullUser, 'delete-own-account'),
+  };
 
   const changePasswordForm = await superValidate(changePasswordSchema);
   const changeEmailForm = await superValidate(changeEmailSchema);
@@ -283,10 +324,11 @@ export const load: PageServerLoad = async event => {
   changeUserConfigForm.data.mobile = dbUser.config.mobile;
 
   return {
-    user: transformUser(dbUser),
+    user: toFullUser(dbUser),
     changePasswordForm,
     changeEmailForm,
     deleteAccountForm,
     changeUserConfigForm,
+    userPerms,
   };
 };

@@ -3,6 +3,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT } from '$lib/constants';
 import { emailVerificationLimiter } from '$lib/server/limiter';
+import { minUserQuery } from '$lib/server/queries';
 
 export const load: PageServerLoad = async event => {
   if (!ENABLE_EMAIL_VERIFICATION) {
@@ -20,6 +21,12 @@ export const load: PageServerLoad = async event => {
 
   try {
     const userId = await validateToken(token);
+
+    const user = await minUserQuery.execute({ id: userId });
+
+    if (!user || user.deleted) {
+      throw error(404, 'auth.user-not-found');
+    }
 
     await auth.invalidateAllUserSessions(userId);
     await auth.updateUserAttributes(userId, { verified: true });

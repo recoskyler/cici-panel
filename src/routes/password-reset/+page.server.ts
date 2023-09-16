@@ -71,7 +71,7 @@ export const actions: Actions = {
     try {
       const dbUser = await db.query.user.findFirst({ where: eq(user.email, form.data.email) });
 
-      if (!dbUser) {
+      if (!dbUser || dbUser.deleted) {
         return message(
           form,
           'password-reset-sent',

@@ -5,13 +5,13 @@ import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/drizzle';
 import { userConfig } from '$lib/db/schema';
 import {
-    DISCLAIMER_DISMISSED_COOKIE_NAME,
-    ENABLE_EMAIL_VERIFICATION,
+  DISCLAIMER_DISMISSED_COOKIE_NAME,
+  ENABLE_EMAIL_VERIFICATION,
 } from '$lib/constants';
 import { setError, superValidate } from 'sveltekit-superforms/server';
 import { insertUserConfigSchema, type NewUserConfig } from '$lib/db/types';
 import { auth } from '$lib/server/lucia';
-import { currentUserFullQuery } from '$lib/server/queries';
+import { fullUserQuery } from '$lib/server/queries';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const session = await locals.auth.validate();
@@ -20,9 +20,10 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw redirect(302, '/login');
   }
 
-    const dbUser = await currentUserFullQuery.execute({ id: session.user.userId });
+  const dbUser = await fullUserQuery.execute({ id: session.user.userId });
 
-  if (!dbUser) throw error(404, 'auth.user-not-found');
+  if (!dbUser || dbUser.deleted) throw error(404, 'auth.user-not-found');
+
   if (dbUser.config) throw redirect(302, '/app');
 
   const form = await superValidate(insertUserConfigSchema.omit({ userId: true }));
@@ -51,10 +52,10 @@ export const actions: Actions = {
     try {
       const config: NewUserConfig = {
         userId: session.user.userId,
-        displayname: form.data.displayname,
-        firstname: form.data.firstname,
-        lastname: form.data.lastname,
-        mobile: form.data.mobile,
+        displayname: form.data.displayname.trim(),
+        firstname: form.data.firstname.trim(),
+        lastname: form.data.lastname ? form.data.lastname.trim() : undefined,
+        mobile: form.data.mobile ? form.data.mobile.trim() : undefined,
       };
 
       await db.insert(userConfig).values(config);

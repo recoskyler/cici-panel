@@ -8,6 +8,7 @@
   import FeatureCard from 'components/FeatureCard.svelte';
   import { _ } from 'svelte-i18n';
   import type { PageData } from './$types';
+  import { ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
 
   $currentPage = SITE_PAGE.MODERATION;
   $canGoBack = null;
@@ -16,8 +17,13 @@
   export let data: PageData;
 </script>
 
+<svelte:head>
+  <meta name="robots" content="noindex" />
+  <title>{$_('app-name')} | {$_('page-title.moderation')}</title>
+</svelte:head>
+
 <div class="flex p-5 flex-col lg:flex-row gap-3 max-w-3xl flex-wrap mx-auto my-auto items-center">
-  {#if data.canManageUsers}
+  {#if data.perms.canManageUsers}
     <FeatureCard
       icon={faUsersCog}
       name={ $_('page-title.users') }
@@ -26,7 +32,7 @@
     />
   {/if}
 
-  {#if data.canManageGroups}
+  {#if data.perms.canManageGroups}
     <FeatureCard
       icon={faUserGroup}
       name={ $_('page-title.groups') }
@@ -35,7 +41,7 @@
     />
   {/if}
 
-  {#if data.canManageRoles}
+  {#if data.perms.canManageRoles && ENABLE_GRANULAR_PERMISSIONS}
     <FeatureCard
       icon={faListCheck}
       name={ $_('page-title.roles') }

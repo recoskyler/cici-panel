@@ -17,6 +17,8 @@
   alt={email}
   class={`minidenticon bg-slate-800 dark:bg-slate-200 ${imgClass}`}
   style={`width:${size}rem; height:${size}rem;`}
+  width={`${size}rem`}
+  height={`${size}rem`}
 />
 
 <style>

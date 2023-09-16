@@ -15,6 +15,7 @@ import {
   message, setError, superValidate,
 } from 'sveltekit-superforms/server';
 import { isPasswordValid } from '$lib/functions/validators';
+import { minUserQuery } from '$lib/server/queries';
 
 const passwordResetSchema = z.object(
   { password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH) },
@@ -54,7 +55,11 @@ export const actions: Actions = {
 
     try {
       const userId = await validateToken(params.token ?? '');
-      const user = await auth.getUser(userId);
+      const user = await minUserQuery.execute({ id: userId });
+
+      if (!user || user.deleted) {
+        return setError(form, '', 'auth.user-not-found');
+      }
 
       if (!isPasswordValid(form.data.password)) {
         console.error('Invalid password');
@@ -66,7 +71,7 @@ export const actions: Actions = {
         );
       }
 
-      await auth.invalidateAllUserSessions(user.userId);
+      await auth.invalidateAllUserSessions(user.id);
       await auth.updateKeyPassword('email', user.email, form.data.password);
 
       console.log('Changed password successfully');

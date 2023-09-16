@@ -39,9 +39,9 @@
       <svelte:fragment slot="lead">
         {#if $canGoBack}
           <button
-            aria-label="Go back"
-            title="Go back"
-            class="p-2 ml-2"
+            aria-label={$_('go-back')}
+            title={$_('go-back')}
+            class="p-2 ml-2 transition-all hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full"
             on:click={async () => {
               const url = $canGoBack;
 
@@ -164,6 +164,18 @@
 
         <span>{$_('page-title.home')}</span>
       </TabAnchor>
+
+      {#if data.isModerator}
+        <TabAnchor selected={$currentPage === SITE_PAGE.MODERATION} href="/app/moderation">
+          <svelte:fragment slot="lead">
+            <div class="flex items-center justify-center mb-2">
+              <Fa icon={faHammer} fw />
+            </div>
+          </svelte:fragment>
+
+          <span>{$_('page-title.moderation')}</span>
+        </TabAnchor>
+      {/if}
 
       <TabAnchor
         selected={$currentPage === SITE_PAGE.PROFILE}
