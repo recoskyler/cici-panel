@@ -1,7 +1,7 @@
 import { lucia } from 'lucia';
 import { dev } from '$app/environment';
-import { pg } from '@lucia-auth/adapter-postgresql';
-import { db, pool } from '$lib/server/drizzle';
+import { postgres as postgresAdapter } from '@lucia-auth/adapter-postgresql';
+import { db, queryClient } from '$lib/server/drizzle';
 import { sveltekit } from 'lucia/middleware';
 import { EMAIL_VERIFICATION_EXPIRATION, PASSWORD_RESET_EXPIRATION } from '$env/static/private';
 import { token } from '$lib/db/schema';
@@ -13,8 +13,8 @@ export const auth = lucia({
   env: dev ? 'DEV' : 'PROD',
   middleware: sveltekit(),
   sessionCookie: { expires: false },
-  adapter: pg(
-    pool,
+  adapter: postgresAdapter(
+    queryClient,
     {
       user: 'auth_user',
       key: 'user_key',
