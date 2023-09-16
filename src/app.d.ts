@@ -19,6 +19,7 @@ declare namespace Lucia {
   type DatabaseUserAttributes = {
     email: string;
     verified: boolean;
+    deleted: boolean;
   };
   // eslint-disable-next-line @typescript-eslint/ban-types
   type DatabaseSessionAttributes = {};
