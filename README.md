@@ -1,6 +1,6 @@
 # Cici Panel
 
-An admin panel for turning your software into a SaaS.
+An admin panel template with granular permissions, roles, email verification, password resets, user groups and management.
 
 - [Cici Panel](#cici-panel)
   - [Features](#features)
@@ -11,30 +11,22 @@ An admin panel for turning your software into a SaaS.
 
 ## Features
 
-- [ ] i18n support
-- [ ] dark/light theme
-- [ ] users
-  - [ ] teams
-  - [ ] granular permissions
-- [ ] customers
-  - [ ] projects
-    - [ ] api keys
-- [ ] stripe connection
-- [ ] payment checking adapters
-- [ ] email verification
-- [ ] password reset
-- [ ] remote warnings
-- [ ] multi-language adapters/integration
-- [ ] enable/disable features using .env
-- [ ] issue tracking
-  - [ ] per company
-  - [ ] per project
-  - [ ] per user
-  - [ ] assigned users per issue
-  - [ ] importance tags
-  - [ ] tags
-- [ ] enable/disable new sign-ups
-- [ ] email & password login
+- [ ] I18N support
+- [ ] Dark/light theme
+- [ ] Teams
+- [ ] Granular permissions
+- [ ] Roles
+- [ ] User groups
+- [ ] Email verification
+- [ ] Password reset
+- [ ] Enable/disable features using .env
+  - [ ] Granular permissions
+  - [ ] Password resets
+  - [ ] Sign-ups
+  - [ ] Themes
+  - [ ] Email verification
+  - [ ] Rate limiting
+- [ ] Email & password authentication
 
 ## Tech-stack
 
@@ -55,25 +47,31 @@ An admin panel for turning your software into a SaaS.
     cd cici-panel
     ```
 
-2. Create an .env file:
+2. Install the dependencies:
+
+    ```bash
+    npm i
+    ```
+
+3. Create an .env file:
 
     ```bash
     cp sample.env .env
     ```
 
-3. Fill in the required fields in the .env file using your favorite editor:
+4. Fill in the required fields in the .env file using your favorite editor:
 
     ```bash
     vim .env
     ```
 
-4. Generate the database migrations:
+5. Generate the database migrations:
 
     ```bash
     npm run generate
     ```
 
-5. Run the development server:
+6. Run the development server:
 
     ```bash
     npm run dev
