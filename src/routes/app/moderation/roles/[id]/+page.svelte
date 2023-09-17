@@ -3,10 +3,10 @@
   import type { PageData } from './$types';
   import FormError from 'components/FormError.svelte';
   import FormSuccess from 'components/FormSuccess.svelte';
-  import { canGoBack } from '$lib/stores/canGoBack';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
+  import { canGoBack } from 'stores/canGoBack';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { _ } from 'svelte-i18n';
-  import { pageTitle } from '$lib/stores/pageTitle';
+  import { pageTitle } from 'stores/pageTitle';
   import {
     faCheck,
     faUserGroup,

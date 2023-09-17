@@ -1,7 +1,7 @@
 <script lang='ts'>
-  import { canGoBack } from '$lib/stores/canGoBack';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
-  import { pageTitle } from '$lib/stores/pageTitle';
+  import { canGoBack } from 'stores/canGoBack';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
+  import { pageTitle } from 'stores/pageTitle';
   import {
     faListCheck, faUserGroup, faUsersCog,
   } from '@fortawesome/free-solid-svg-icons';

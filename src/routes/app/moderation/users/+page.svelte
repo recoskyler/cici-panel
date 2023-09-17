@@ -3,9 +3,9 @@
   import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
   import type { PageData } from './$types';
   import { _ } from 'svelte-i18n';
-  import { canGoBack } from '$lib/stores/canGoBack';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
-  import { pageTitle } from '$lib/stores/pageTitle';
+  import { canGoBack } from 'stores/canGoBack';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
+  import { pageTitle } from 'stores/pageTitle';
   import Fa from 'svelte-fa';
   import { faEdit } from '@fortawesome/free-solid-svg-icons';
   import { goto } from '$app/navigation';

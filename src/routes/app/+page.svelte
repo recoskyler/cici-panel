@@ -1,8 +1,8 @@
 <script lang="ts">
   // import type { PageData } from './$types';
-  import { pageTitle } from '$lib/stores/pageTitle';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
-  import { canGoBack } from '$lib/stores/canGoBack';
+  import { pageTitle } from 'stores/pageTitle';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
+  import { canGoBack } from 'stores/canGoBack';
   import { _ } from 'svelte-i18n';
 
   // export let data: PageData;

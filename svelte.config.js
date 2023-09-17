@@ -8,7 +8,7 @@ const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      writables: 'src/lib/writables',
+      stores: 'src/lib/stores',
       components: 'src/lib/components',
       images: 'src/lib/images',
       styles: 'src/lib/styles',

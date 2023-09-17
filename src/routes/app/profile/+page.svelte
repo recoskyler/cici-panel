@@ -8,7 +8,7 @@
   import { passwordPopupFocusBlur } from 'components/PasswordStrengthMeter/helpers.js';
   import type { PageData } from './$types';
   import Minidenticon from 'components/Minidenticon.svelte';
-  import { pageTitle } from '$lib/stores/pageTitle';
+  import { pageTitle } from 'stores/pageTitle';
   import FormError from 'components/FormError.svelte';
   import PasswordStrengthMeter from 'components/PasswordStrengthMeter/PasswordStrengthMeter.svelte';
   import Fa from 'svelte-fa';
@@ -23,8 +23,8 @@
   import { superForm } from 'sveltekit-superforms/client';
   import PasswordPopup from 'components/PasswordPopup.svelte';
   import FormSuccess from 'components/FormSuccess.svelte';
-  import { canGoBack } from '$lib/stores/canGoBack';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
+  import { canGoBack } from 'stores/canGoBack';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { toTitleCase } from '$lib/functions/helper';
   import { _ } from 'svelte-i18n';
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';

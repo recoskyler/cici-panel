@@ -14,10 +14,10 @@
   import {
     faArrowLeft, faHammer, faHome,
   } from '@fortawesome/free-solid-svg-icons';
-  import { pageTitle } from '$lib/stores/pageTitle';
+  import { pageTitle } from 'stores/pageTitle';
   import { goto } from '$app/navigation';
-  import { SITE_PAGE, currentPage } from '$lib/stores/currentPage';
-  import { canGoBack } from '$lib/stores/canGoBack';
+  import { SITE_PAGE, currentPage } from 'stores/currentPage';
+  import { canGoBack } from 'stores/canGoBack';
   import githubWhite from '$lib/assets/github-mark-white.svg';
   import githubBlack from '$lib/assets/github-mark.svg';
   import { page } from '$app/stores';
