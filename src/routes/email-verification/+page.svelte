@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import mailbox from 'images/undraw_mailbox_re_dvds.svg';
+  import mailbox from '$lib/assets/undraw_mailbox_re_dvds.svg';
   import { _ } from 'svelte-i18n';
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import mail from 'images/undraw_mail_sent_re_0ofv.svg';
+  import mail from '$lib/assets/undraw_mail_sent_re_0ofv.svg';
   import { _ } from 'svelte-i18n';
 </script>
 
