@@ -7,6 +7,7 @@ An admin panel template with granular permissions, roles, email verification, pa
   - [Tech-stack](#tech-stack)
   - [Developing](#developing)
   - [Building](#building)
+  - [LICENSE](#license)
   - [About](#about)
 
 ## Features
@@ -53,7 +54,7 @@ An admin panel template with granular permissions, roles, email verification, pa
     npm i
     ```
 
-3. Create an .env file:
+3. Create an .env file and fill in the required variables. You can enable/disable features at this point:
 
     ```bash
     cp sample.env .env
@@ -130,6 +131,12 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
+## [LICENSE](https://github.com/recoskyler/cici-panel/blob/main/LICENSE)
+
+This template is under [The Unlicense License](https://github.com/recoskyler/cici-panel/blob/main/LICENSE).
+
 ## About
 
 By [recoskyler](https://github.com/recoskyler) - September 2023
+
+The name comes from "*Cici Bebe Bisküvisi*", a Turkish milk-biscuit snack for babies (*and adults*). **Would recommend**
