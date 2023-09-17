@@ -1,8 +1,7 @@
 import { db } from '../server/drizzle';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import * as schema from '../db/schema';
 import type { NewPermission, NewRole } from './types';
-import { eq } from 'drizzle-orm';
+import { eq, notInArray } from 'drizzle-orm';
 import { GRANULAR_PERMISSIONS_PREFIX } from '$lib/constants';
 import {
   PERMISSIONS, MODERATOR_PERMISSIONS, USER_PERMISSIONS,
@@ -37,7 +36,8 @@ export const seed = async () => {
   console.log('Seeding database...');
 
   try {
-    await migrate(db, { migrationsFolder: 'drizzle' });
+    await db.delete(schema.permission)
+      .where(notInArray(schema.permission.name, permissions.map(e => e.name)));
 
     await db.insert(schema.permission).values(permissions).onConflictDoNothing();
 

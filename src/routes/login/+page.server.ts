@@ -7,7 +7,11 @@ import {
   ENABLE_EMAIL_VERIFICATION, ENABLE_RATE_LIMIT, MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
 import { signInLimiter } from '$lib/server/limiter';
-import { minUserQuery } from '$lib/server/queries';
+import { fullUserQuery } from '$lib/server/queries';
+import { seed } from '$lib/db/seed';
+import { PERMISSIONS } from '$lib/server/constants';
+import { can } from '$lib/server/granular-permissions/permissions';
+import { toFullUser } from '$lib/server/granular-permissions/transform';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -56,10 +60,16 @@ export const actions: Actions = {
     try {
       const key = await auth.useKey('email', form.data.email.trim(), form.data.password);
 
-      const dbUser = await minUserQuery.execute({ id: key.userId });
+      const dbUser = await fullUserQuery.execute({ id: key.userId });
 
       if (!dbUser || dbUser.deleted) {
         throw new Error('This user has been marked as deleted');
+      }
+
+      const fullUser = toFullUser(dbUser);
+
+      if (can(fullUser, PERMISSIONS.slice())) {
+        await seed();
       }
 
       const session = await auth.createSession({ userId: key.userId, attributes: {} });
