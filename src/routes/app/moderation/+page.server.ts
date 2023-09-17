@@ -2,7 +2,7 @@ import { fullUserQuery } from '$lib/server/queries';
 import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { toFullUser } from '$lib/server/granular-permissions/transform';
-import { can, hasAnyPermissions } from '$lib/server/granular-permissions/permissions';
+import { hasAnyPermissions } from '$lib/server/granular-permissions/permissions';
 import { MODERATOR_PERMISSIONS } from '$lib/server/constants';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const fullUser = toFullUser(dbUser);
 
-  if (!can(fullUser, MODERATOR_PERMISSIONS)) throw error(403, 'forbidden');
+  if (!hasAnyPermissions(fullUser, MODERATOR_PERMISSIONS)) throw error(403, 'forbidden');
 
   const perms = {
     canManageUsers: hasAnyPermissions(fullUser, [
@@ -40,6 +40,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       'create-role',
       'delete-role',
       'read-list-roles',
+      'update-role-details',
       'change-role-permissions',
     ]),
   };
