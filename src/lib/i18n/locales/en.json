@@ -58,6 +58,7 @@
     "create-role": "Create new role",
     "create-user": "Create new user",
     "creating-group": "Creating group...",
+    "creating-role": "Creating new role...",
     "creating-user": "Creating user...",
     "delete-account": "Delete account",
     "delete-account-warning": "If you choose to delete your account, there is no going back! Enter your current password and type \"<i>Delete</i>\" (case sensitive) without the \"quotes\" in the <strong>Confirmation</strong> field to proceed.",
@@ -83,6 +84,8 @@
         "sent-email-verification-token": "Sent email verification token"
     },
     "error": {
+        "failed-to-create-new-group": "Failed to create new group.",
+        "failed-to-create-new-role": "Failed to create new role.",
         "failed-to-create-new-user": "Failed to create new user",
         "failed-to-delete-user": "Failed to delete user.",
         "failed-to-permanently-delete-user": "Failed to permanently delete user.",
@@ -92,7 +95,9 @@
         "password-does-not-meet-the-requirements-or-too-weak": "Password does not meet the requirements or too weak.",
         "password-required-on-email-change": "User\\'s new or existing password is required in order to change the user\\'s email.",
         "role-not-found": "Role not found",
-        "this-user-has-been-deleted": "This user has been deleted."
+        "this-user-has-been-deleted": "This user has been deleted.",
+        "you-don-t-have-permission-to-change-your-own-email": "You don\\'t have permission to change your own email.",
+        "you-don-t-have-permission-to-change-your-own-password": "You don\\'t have permission to change your own password."
     },
     "exterminating": "Exterminating...",
     "failed-to-create-account": "Failed to create account.",
@@ -194,6 +199,7 @@
     "role-details": "Role details",
     "role-details-changed-successfully": "Role details saved successfully",
     "roles": "Roles",
+    "root": "Root",
     "save": "Save",
     "saving": "Saving...",
     "select-none-one-or-multiple": "Select none, one, or multiple.",
