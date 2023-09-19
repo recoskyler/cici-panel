@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
-import { ne, sql } from 'drizzle-orm';
+import { asc, sql } from 'drizzle-orm';
 import { db } from './drizzle';
-import { user } from '$lib/db/schema';
+import { group, role } from '$lib/db/schema';
 
 // FULL - Includes permissions, roles, user details, and groups
 // SAFE - Does not include permissions, but includes roles, user details, and groups
@@ -86,8 +86,7 @@ export const fullRoleQuery = db.query.role
 
 // Find many
 
-export const fullOtherUsersQuery = await db.query.user.findMany({
-  where: ne(user.id, sql.placeholder('currentUserId')),
+export const fullAllUsersQuery = await db.query.user.findMany({
   with: {
     usersToGroups: {
       with: {
@@ -103,28 +102,32 @@ export const fullOtherUsersQuery = await db.query.user.findMany({
     usersToRoles: { with: { role: { with: { permissionsToRoles: { with: { permission: true } } } } } },
     config: true,
   },
-}).prepare('other_users_full');
+}).prepare('all_users_full');
 
-export const safeOtherUsersQuery = await db.query.user.findMany({
-  where: ne(user.id, sql.placeholder('currentUserId')),
+export const safeAllUsersQuery = await db.query.user.findMany({
   with: {
     usersToGroups: { with: { group: { with: { groupsToRoles: { with: { role: true } } } } } },
     usersToRoles: { with: { role: true } },
     config: true,
   },
-}).prepare('other_users_safe');
+}).prepare('all_users_safe');
 
-export const minOtherUsersQuery = db.query.user.findMany({
-  where: ne(user.id, sql.placeholder('currentUserId')),
-  with: { config: true },
-}).prepare('other_users_min');
+export const minAllUsersQuery = db.query.user
+  .findMany({ with: { config: true } })
+  .prepare('all_users_min');
 
 export const availableGroupsQuery = db.query.group
-  .findMany({ where: (group, { eq }) => eq(group.deleted, false) })
+  .findMany({
+    where: (group, { eq }) => eq(group.deleted, false),
+    orderBy: asc(group.name),
+  })
   .prepare('available_groups');
 
 export const availableRolesQuery = db.query.role
-  .findMany({ where: (role, { eq }) => eq(role.deleted, false) })
+  .findMany({
+    where: (role, { eq }) => eq(role.deleted, false),
+    orderBy: asc(role.name),
+  })
   .prepare('available_roles');
 
 export const safeGroupsQuery = db.query.group
@@ -133,6 +136,7 @@ export const safeGroupsQuery = db.query.group
       groupsToRoles: { with: { role: true } },
       usersToGroups: { with: { user: { with: { config: true } } } },
     },
+    orderBy: asc(group.name),
   })
   .prepare('groups_safe');
 
@@ -142,5 +146,6 @@ export const safeRolesQuery = db.query.role
       groupsToRoles: { with: { group: true } },
       usersToRoles: { with: { user: { with: { config: true } } } },
     },
+    orderBy: asc(role.name),
   })
   .prepare('roles_safe');
