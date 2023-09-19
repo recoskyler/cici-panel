@@ -169,6 +169,7 @@ export const toFullUser = (dbUser: FullDatabaseUser): FullUser => {
     directPermissions: getDirectPermissions(dbUser),
     directRoles: getDirectFullRoles(dbUser),
     groups: getFullGroups(dbUser),
+    root: dbUser.root,
   };
 };
 
@@ -181,6 +182,7 @@ export const toSafeUser = (dbUser: FullDatabaseUser | SafeDatabaseUser): SafeUse
   allRoles: getAllSafeRoles(dbUser),
   directRoles: getDirectSafeRoles(dbUser),
   groups: getSafeGroups(dbUser),
+  root: dbUser.root,
 });
 
 export const toSafeGroup = (dbGroup: FullDatabaseGroup | SafeDatabaseGroup): SafeGroup => ({
@@ -201,6 +203,7 @@ export const toSafeGroup = (dbGroup: FullDatabaseGroup | SafeDatabaseGroup): Saf
     deleted: u.user.deleted,
     email: u.user.email,
     verified: u.user.verified,
+    root: u.user.root,
   })),
 });
 
@@ -226,6 +229,7 @@ export const toFullGroup = (dbGroup: FullDatabaseGroup): FullGroup => ({
     deleted: u.user.deleted,
     email: u.user.email,
     verified: u.user.verified,
+    root: u.user.root,
   })),
 });
 
@@ -242,6 +246,7 @@ export const toFullRole = (dbRole: FullDatabaseRole): FullRole => ({
     deleted: u.user.deleted,
     email: u.user.email,
     verified: u.user.verified,
+    root: u.user.root,
   })),
   groups: dbRole.groupsToRoles.filter(e => !e.group.deleted).map(g => ({
     id: g.group.id,
@@ -266,6 +271,7 @@ export const toSafeRole = (dbRole: SafeDatabaseRole | FullDatabaseRole): SafeRol
     deleted: u.user.deleted,
     email: u.user.email,
     verified: u.user.verified,
+    root: u.user.root,
   })),
   groups: dbRole.groupsToRoles.filter(e => !e.group.deleted).map(g => ({
     id: g.group.id,
