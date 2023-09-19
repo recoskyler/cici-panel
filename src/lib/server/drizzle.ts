@@ -19,7 +19,7 @@ const migrationClient = postgres({
   max: 1,
 });
 
-migrate(drizzle(migrationClient), { migrationsFolder: 'drizzle' });
+await migrate(drizzle(migrationClient), { migrationsFolder: 'drizzle' });
 
 export const queryClient = postgres(CONNECTION_DETAILS);
 
