@@ -15,6 +15,7 @@ export const user = pgTable('auth_user', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   verified: boolean('verified').default(false).notNull(),
   deleted: boolean('deleted').default(false).notNull(),
+  root: boolean('root').default(false).notNull(),
 }, table => ({ deletedIndex: index('user_deleted_index').on(table.deleted) }));
 
 export const session = pgTable('user_session', {
@@ -89,7 +90,7 @@ export const role = pgTable(
 export const permissionsToRoles = pgTable(
   'permissions_to_roles',
   {
-    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
+    permissionName: varchar('permission_name', { length: 64 }).notNull().references(() => permission.name),
     roleId: uuid('role_id').notNull().references(() => role.id),
   },
   t => ({ pk: primaryKey(t.permissionName, t.roleId) }),
@@ -108,7 +109,7 @@ export const usersToPermissions = pgTable(
   'users_to_permissions',
   {
     userId: varchar('user_id', { length: 15 }).notNull().references(() => user.id),
-    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
+    permissionName: varchar('permission_name', { length: 64 }).notNull().references(() => permission.name),
   },
   t => ({ pk: primaryKey(t.permissionName, t.userId) }),
 );
@@ -135,7 +136,7 @@ export const groupsToPermissions = pgTable(
   'groups_to_permissions',
   {
     groupId: uuid('group_id').notNull().references(() => group.id),
-    permissionName: varchar('name', { length: 64 }).notNull().references(() => permission.name),
+    permissionName: varchar('permission_name', { length: 64 }).notNull().references(() => permission.name),
   },
   t => ({ pk: primaryKey(t.permissionName, t.groupId) }),
 );
