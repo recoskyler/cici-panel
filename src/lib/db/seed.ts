@@ -2,16 +2,15 @@ import { db } from '../server/drizzle';
 import * as schema from '../db/schema';
 import type { NewPermission, NewRole } from './types';
 import { eq, notInArray } from 'drizzle-orm';
-import { GRANULAR_PERMISSIONS_PREFIX } from '$lib/constants';
 import {
   PERMISSIONS, MODERATOR_PERMISSIONS, USER_PERMISSIONS,
 } from '$lib/server/constants';
-import { syncPermissionsToRole } from '$lib/server/granular-permissions/permissions';
+import { syncPermissionsToRole, withPrefix } from '$lib/server/granular-permissions/permissions';
 
 // Permission name must be an I18N key
 
 const permissions: NewPermission[] = PERMISSIONS.map(
-  p => ({ name: `${GRANULAR_PERMISSIONS_PREFIX}.${p}` }),
+  p => ({ name: withPrefix(p) }),
 );
 
 const roles: NewRole[] = [

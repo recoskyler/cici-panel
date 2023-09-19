@@ -16,57 +16,79 @@ export type GranularPermission = typeof PERMISSIONS[
   Exclude<keyof typeof PERMISSIONS, keyof Array<typeof PERMISSIONS>>
 ];
 
+export const withPrefix = (
+  permission: string,
+  prefix = GRANULAR_PERMISSIONS_PREFIX,
+) => {
+  if (permission.length < prefix.length + 2
+    || !permission.includes('.')
+    || permission.substring(0, prefix.length + 1) !== `${prefix}.`
+  ) {
+    return `${prefix}.${permission}`;
+  }
+
+  return permission;
+};
+
 // Check permissions
 
 export const hasAllDirectPermissions = (user: FullUser, permissions: GranularPermission[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
   if (permissions.length === 0) return false;
 
   return permissions.every(
-    p => user.directPermissions.some(e => e.name === `${GRANULAR_PERMISSIONS_PREFIX}.${p}`),
+    p => user.directPermissions.some(e => e.name === withPrefix(p)),
   );
 };
 
 export const hasAnyPermissions = (user: FullUser, permissions: GranularPermission[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
   if (permissions.length === 0) return false;
 
   return permissions.some(
-    p => user.allPermissions.some(e => e.name === `${GRANULAR_PERMISSIONS_PREFIX}.${p}`),
+    p => user.allPermissions.some(e => e.name === withPrefix(p)),
   );
 };
 
 export const hasAnyDirectPermissions = (user: FullUser, permissions: GranularPermission[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
   if (permissions.length === 0) return false;
 
   return permissions.some(
-    p => user.directPermissions.some(e => e.name === `${GRANULAR_PERMISSIONS_PREFIX}.${p}`),
+    p => user.directPermissions.some(e => e.name === withPrefix(p)),
   );
 };
 
 export const hasDirectPermission = (user: FullUser, permission: GranularPermission) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
+
   return user.directPermissions.some(
-    p => p.name === `${GRANULAR_PERMISSIONS_PREFIX}.${permission}`,
+    p => p.name === withPrefix(permission),
   );
 };
 
 export const hasPermission = (user: FullUser, permission: GranularPermission) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
+
   return user.allPermissions.some(
-    p => p.name === `${GRANULAR_PERMISSIONS_PREFIX}.${permission}`,
+    p => p.name === withPrefix(permission),
   );
 };
 
 export const can = (user: FullUser, permissions: GranularPermission | GranularPermission[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
+  if (user.root) return true;
   if (!Array.isArray(permissions)) return hasPermission(user, permissions);
 
   if (permissions.length === 0) return false;
 
   return permissions.every(
-    p => user.allPermissions.some(e => e.name === `${GRANULAR_PERMISSIONS_PREFIX}.${p}`),
+    p => user.allPermissions.some(e => e.name === withPrefix(p)),
   );
 };
 
@@ -90,7 +112,7 @@ export const assignPermissionsToUser = async (
 
   await db.insert(usersToPermissions)
     .values(permissions.map(
-      e => ({ permissionName: `${GRANULAR_PERMISSIONS_PREFIX}.${e}`, userId: userId }),
+      e => ({ permissionName: withPrefix(e), userId: userId }),
     ))
     .onConflictDoNothing();
 };
@@ -103,7 +125,7 @@ export const assignPermissionsToRole = async (
 
   await db.insert(permissionsToRoles)
     .values(permissions.map(
-      e => ({ permissionName: `${GRANULAR_PERMISSIONS_PREFIX}.${e}`, roleId: roleId }),
+      e => ({ permissionName: withPrefix(e), roleId: roleId }),
     ))
     .onConflictDoNothing();
 };
@@ -120,7 +142,7 @@ export const syncPermissionsToUser = async (
 
   await db.insert(usersToPermissions)
     .values(permissions.map(
-      e => ({ permissionName: `${GRANULAR_PERMISSIONS_PREFIX}.${e}`, userId: userId }),
+      e => ({ permissionName: withPrefix(e), userId: userId }),
     ))
     .onConflictDoNothing();
 };
@@ -135,7 +157,7 @@ export const syncPermissionsToRole = async (
 
   await db.insert(permissionsToRoles)
     .values(permissions.map(
-      e => ({ permissionName: `${GRANULAR_PERMISSIONS_PREFIX}.${e}`, roleId: roleId }),
+      e => ({ permissionName: withPrefix(e), roleId: roleId }),
     ))
     .onConflictDoNothing();
 };
@@ -148,9 +170,11 @@ export const syncPermissionsToGroup = async (
 
   if (permissions.length === 0) return;
 
+  console.log(permissions);
+
   await db.insert(groupsToPermissions)
     .values(permissions.map(
-      e => ({ permissionName: `${GRANULAR_PERMISSIONS_PREFIX}.${e}`, groupId: groupId }),
+      e => ({ permissionName: withPrefix(e), groupId: groupId }),
     ))
     .onConflictDoNothing();
 };
@@ -167,7 +191,7 @@ export const removePermissionsFromUser = async (
     eq(usersToPermissions.userId, userId),
     inArray(
       usersToPermissions.permissionName,
-      permissions.map(e => `${GRANULAR_PERMISSIONS_PREFIX}.${e}`),
+      permissions.map(e => withPrefix(e)),
     ),
   ));
 };
