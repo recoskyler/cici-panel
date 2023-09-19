@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { ENABLE_GRANULAR_PERMISSIONS, PER_PAGE } from '$lib/constants';
+  import {
+    ENABLE_EMAIL_VERIFICATION, ENABLE_GRANULAR_PERMISSIONS, PER_PAGE,
+  } from '$lib/constants';
   import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
   import type { PageData } from './$types';
   import { _ } from 'svelte-i18n';
@@ -7,7 +9,9 @@
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { pageTitle } from 'stores/pageTitle';
   import Fa from 'svelte-fa';
-  import { faEdit } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faCircleCheck, faCircleXmark, faEdit,
+  } from '@fortawesome/free-solid-svg-icons';
   import { goto } from '$app/navigation';
   import Minidenticon from 'components/Minidenticon.svelte';
 
@@ -82,7 +86,7 @@
 
         <tbody>
           {#each paginatedSource as row}
-            <tr>
+            <tr class={row.root ? 'font-bold' : ''}>
               <td class="table-cell-fit">
                 <div style='display:block; width:1.5rem;'>
                   <Minidenticon email={row.email} size={1.5} />
@@ -102,16 +106,28 @@
               </td>
 
               <td class={`table-cell-fit ${row.deleted ? 'text-red-500' : ''}`}>
-                {row.email}
+                <div class='flex flex-row gap-3 items-center'>
+                  {row.email}
+
+                  {#if !row.deleted}
+                    <Fa
+                      fw
+                      icon={row.verified || !ENABLE_EMAIL_VERIFICATION
+                        ? faCircleCheck : faCircleXmark}
+                    />
+                  {/if}
+                </div>
               </td>
 
               {#if data.perms.canViewGroups}
                 <td>
                   <div class="flex flex-row gap-2 flex-wrap align-middle">
                     {#each row.groups as group}
-                      <span class="badge variant-filled">
-                        {group.name}
-                      </span>
+                      <a href={`/app/moderation/groups/${group.id}`}>
+                        <span class="badge variant-filled">
+                          {group.name}
+                        </span>
+                      </a>
                     {/each}
                   </div>
                 </td>
@@ -120,10 +136,12 @@
               {#if data.perms.canViewRoles && ENABLE_GRANULAR_PERMISSIONS}
                 <td class='flex flex-col'>
                   <div class="flex flex-row gap-2 flex-wrap">
-                    {#each row.allRoles as role}
-                      <span class="badge variant-ghost">
-                        {$_(role.name)}
-                      </span>
+                    {#each row.directRoles as role}
+                      <a href={`/app/moderation/roles/${role.id}`}>
+                        <span class="badge variant-ghost">
+                          {role.name}
+                        </span>
+                      </a>
                     {/each}
                   </div>
                 </td>

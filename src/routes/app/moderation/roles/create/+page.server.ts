@@ -8,7 +8,7 @@ import { toFullUser } from '$lib/server/granular-permissions/transform';
 import {
   availableGroupsQuery,
   fullUserQuery,
-  minOtherUsersQuery,
+  minAllUsersQuery,
 } from '$lib/server/queries';
 import {
   redirect, error, fail,
@@ -34,7 +34,7 @@ const schema = insertRoleSchema
   .extend({
     user: z.array(z.string().length(15)),
     group: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -65,8 +65,8 @@ export const load: PageServerLoad = async event => {
   let permissions: Permission[] = [];
 
   if (userPerms.canSetUsers) {
-    users = await minOtherUsersQuery.execute({ currentUserId: session.user.userId });
-    users = users.filter(e => !e.deleted && e.verified);
+    users = await minAllUsersQuery.execute();
+    users = users.filter(e => !e.deleted && (e.verified || !ENABLE_EMAIL_VERIFICATION));
   }
 
   if (userPerms.canSetGroups) {
@@ -138,7 +138,7 @@ export const actions: Actions = {
         await syncGroupsToRole(form.data.group, createdId);
       }
     } catch (e) {
-      console.error('Failed to create new user');
+      console.error('Failed to create new role');
       console.error(e);
 
       if (createdId !== '') {

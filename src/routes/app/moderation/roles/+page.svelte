@@ -7,7 +7,7 @@
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { pageTitle } from 'stores/pageTitle';
   import Fa from 'svelte-fa';
-  import { faEdit } from '@fortawesome/free-solid-svg-icons';
+  import { faEdit, faLock } from '@fortawesome/free-solid-svg-icons';
   import { goto } from '$app/navigation';
 
   export let data: PageData;
@@ -75,17 +75,24 @@
           {#each paginatedSource as row}
             <tr>
               <td class={`table-cell-fit ${row.deleted ? 'text-red-500' : ''}`}>
-                {row.name}
+                <div class='flex flex-row gap-3 items-center'>
+                  {#if row.protected}
+                    <Fa fw icon={faLock} />
+                  {/if}
+
+                  <span class={row.protected ? 'font-bold' : ''}>
+                    {row.name}
+                  </span>
+                </div>
               </td>
 
               <td class={`${row.deleted ? 'text-red-500' : ''}`}>
-                {row.description}
+                {row.description ?? ''}
               </td>
 
               {#if data.perms.canViewUsers || data.perms.canViewGroups}
                 <td class="table-cell-fit">
-                  {(data.perms.canViewUsers ? row.users.length : 0)
-                    + (data.perms.canViewGroups ? row.groups.length : 0)}
+                  {(data.perms.canViewUsers ? row.users.length : 0)}
                 </td>
               {/if}
 

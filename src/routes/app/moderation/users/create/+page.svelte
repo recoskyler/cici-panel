@@ -26,7 +26,7 @@
   import { passwordPopupFocusBlur } from 'components/PasswordStrengthMeter/helpers';
   import Fa from 'svelte-fa';
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';
-  import { ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
+  import { ENABLE_EMAIL_VERIFICATION, ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
 
   $currentPage = SITE_PAGE.MODERATION;
   $canGoBack = '/app/moderation/users';
@@ -201,14 +201,16 @@
 
         <PasswordStrengthMeter password={$form.password} />
 
-        <SlideToggle
-          name="verified"
-          bind:checked={$form.verified}
-          bgDark="bg-surface-400"
-          class="mt-10 mb-5"
-        >
-          {$_('do-not-require-email-verification-from-user')}
-        </SlideToggle>
+        {#if ENABLE_EMAIL_VERIFICATION}
+          <SlideToggle
+            name="verified"
+            bind:checked={$form.verified}
+            bgDark="bg-surface-400"
+            class="mt-10 mb-5"
+          >
+            {$_('do-not-require-email-verification-from-user')}
+          </SlideToggle>
+        {/if}
       </div>
 
       {#if

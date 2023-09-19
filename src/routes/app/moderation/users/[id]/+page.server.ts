@@ -4,7 +4,9 @@ import {
   MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
-import { can, syncPermissionsToUser } from '$lib/server/granular-permissions/permissions';
+import {
+  can, hasAnyPermissions, syncPermissionsToUser,
+} from '$lib/server/granular-permissions/permissions';
 import { toFullUser, toSafeUser } from '$lib/server/granular-permissions/transform';
 import {
   availableGroupsQuery, availableRolesQuery, fullUserQuery, safeUserQuery,
@@ -34,10 +36,10 @@ import {
   user, userConfig, usersToGroups, usersToPermissions, usersToRoles,
 } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { syncRolesByIdToUser } from '$lib/server/granular-permissions/roles';
 import { syncGroupsToUser } from '$lib/server/granular-permissions/groups';
 import { auth } from '$lib/server/lucia';
 import { userUpdateLimiter } from '$lib/server/limiter';
+import { syncRolesToUser } from '$lib/server/granular-permissions/roles';
 
 const deleteSchema = z.object({});
 const permDeleteSchema = z.object({});
@@ -49,7 +51,7 @@ const schema = insertUserSchema
     password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH).optional(),
     group: z.array(z.string().uuid()),
     role: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -70,11 +72,24 @@ export const load: PageServerLoad = async event => {
     throw error(403, 'forbidden');
   }
 
+  if (params.id === fullUser.id
+    && !hasAnyPermissions(
+      fullUser,
+      ['change-own-user-details', 'change-own-email-address', 'change-own-password'],
+    )
+  ) {
+    throw error(403, 'forbidden');
+  }
+
   const userPerms = {
     canDelete: can(fullUser, 'delete-other-user'),
     canSetRoles: can(fullUser, ['read-list-roles', 'change-user-roles']),
     canSetPermissions: can(fullUser, ['read-list-permissions', 'change-user-permissions']),
     canSetGroups: can(fullUser, ['read-list-user-groups', 'add-remove-user-group-members']),
+    canChangeOwnEmail: can(fullUser, 'change-own-email-address'),
+    canChangeOwnPassword: can(fullUser, 'change-own-password'),
+    canChangeOwnDetails: can(fullUser, 'change-own-user-details'),
+    canDeleteOwnAccount: can(fullUser, 'delete-own-account'),
   };
 
   const dbSelectedUser = userPerms.canSetPermissions
@@ -139,6 +154,7 @@ export const load: PageServerLoad = async event => {
     permDeleteForm,
     restoreForm,
     user: selectedUser,
+    isThemselves: params.id === fullUser.id,
   };
 };
 
@@ -169,7 +185,16 @@ export const actions: Actions = {
 
     const fullUser = toFullUser(dbUser);
 
-    if (!can(fullUser, 'create-new-user')) throw error(403, 'forbidden');
+    if (params.id === fullUser.id
+      && !hasAnyPermissions(
+        fullUser,
+        ['change-own-user-details', 'change-own-email-address', 'change-own-password'],
+      )
+    ) {
+      throw error(403, 'forbidden');
+    }
+
+    if (!can(fullUser, 'update-other-user')) throw error(403, 'forbidden');
 
     if (!form.valid) {
       console.error('Form invalid');
@@ -195,6 +220,14 @@ export const actions: Actions = {
       }
 
       if (dbSelectedUser.email !== form.data.email.trim()) {
+        if (!can(fullUser, 'change-own-email-address') && params.id === fullUser.id) {
+          return setError(
+            form,
+            'email',
+            'error.you-don-t-have-permission-to-change-your-own-email',
+          );
+        }
+
         await auth.invalidateAllUserSessions(params.id);
         await auth.updateUserAttributes(
           params.id,
@@ -203,13 +236,31 @@ export const actions: Actions = {
         await auth.deleteKey('email', params.id);
       }
 
-      await auth.updateUserAttributes(
-        params.id,
-        { verified: form.data.verified },
-      );
+      if (ENABLE_EMAIL_VERIFICATION) {
+        await auth.updateUserAttributes(
+          params.id,
+          { verified: form.data.verified ?? false },
+        );
+      }
 
       if (form.data.password) {
+        if (!can(fullUser, 'change-own-password') && params.id === fullUser.id) {
+          return setError(
+            form,
+            'password',
+            'error.you-don-t-have-permission-to-change-your-own-password',
+          );
+        }
+
         await auth.updateKeyPassword('email', form.data.email.trim(), form.data.password);
+      }
+
+      if (!can(fullUser, 'change-own-user-details') && params.id === fullUser.id) {
+        return setError(
+          form,
+          '',
+          'You don\'t have permission to change your own user details.',
+        );
       }
 
       await db.update(userConfig).set({
@@ -220,7 +271,7 @@ export const actions: Actions = {
       }).where(eq(userConfig.userId, params.id));
 
       if (can(fullUser, 'change-user-roles')) {
-        await syncRolesByIdToUser(params.id, form.data.role);
+        await syncRolesToUser(params.id, form.data.role);
       }
 
       if (can(fullUser, 'change-user-permissions')) {
@@ -266,6 +317,11 @@ export const actions: Actions = {
     const fullUser = toFullUser(dbUser);
 
     if (!can(fullUser, 'delete-other-user')) throw error(403, 'forbidden');
+    if (fullUser.root) throw error(403, 'forbidden');
+
+    if (params.id === fullUser.id && !can(fullUser, 'delete-own-account')) {
+      throw error(403, 'forbidden');
+    }
 
     if (!form.valid) {
       console.error('Form invalid');
@@ -326,6 +382,11 @@ export const actions: Actions = {
     const fullUser = toFullUser(dbUser);
 
     if (!can(fullUser, 'delete-other-user')) throw error(403, 'forbidden');
+    if (fullUser.root) throw error(403, 'forbidden');
+
+    if (params.id === fullUser.id && !can(fullUser, 'delete-own-account')) {
+      throw error(403, 'forbidden');
+    }
 
     if (!form.valid) {
       console.error('Form invalid');
@@ -386,6 +447,11 @@ export const actions: Actions = {
     const fullUser = toFullUser(dbUser);
 
     if (!can(fullUser, 'delete-other-user')) throw error(403, 'forbidden');
+    if (fullUser.root) throw error(403, 'forbidden');
+
+    if (params.id === fullUser.id && !can(fullUser, 'delete-own-account')) {
+      throw error(403, 'forbidden');
+    }
 
     if (!form.valid) {
       console.error('Form invalid');

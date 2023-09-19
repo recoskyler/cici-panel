@@ -20,6 +20,7 @@
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';
   import { writable } from 'svelte/store';
   import Minidenticon from 'components/Minidenticon.svelte';
+  import type { FullRole } from '$lib/db/types';
   // import { invalidate } from '$app/navigation';
 
   $currentPage = SITE_PAGE.MODERATION;
@@ -59,6 +60,11 @@
     enhance: restoreEnhance,
     delayed: restoreDelayed,
   } = superForm(data.restoreForm);
+
+  const rolePerms = data.userPerms.canSetPermissions
+    ? (data.role as FullRole).permissions : [];
+
+  // console.log({ rolePerms, userPerms: data.userPerms, role: data.role });
 </script>
 
 <svelte:head>
@@ -69,7 +75,7 @@
 <div
   class="flex mx-auto my-auto max-w-5xl items-stretch flex-col justify-center py-10 px-5 w-full"
 >
-  <form use:enhance method="post" class="w-full">
+  <form use:enhance method="post" class="w-full" action="?/save">
     <div
       class="flex mx-auto my-auto items-center lg:items-stretch gap-5
       flex-col lg:flex-row justify-evenly py-10 px-5 w-full"
@@ -90,6 +96,7 @@
             title={$_('name')}
             placeholder={$_('group-name-placeholder')}
             disabled={$delayed}
+            on:input={_ => { $changed = true; }}
             bind:value={$form.name}
             {...$constraints.name}
           /><br />
@@ -110,6 +117,7 @@
             title={$_('description')}
             placeholder={$_('role-description-placeholder')}
             disabled={$delayed}
+            on:input={_ => { $changed = true; }}
             bind:value={$form.description}
             {...$constraints.description}
           /><br />
@@ -145,8 +153,9 @@
                 <ListBox multiple>
                   {#each data.users as user}
                     <ListBoxItem
+                      on:change={_ => { $changed = true; }}
                       bind:group={$form.user}
-                      name="group"
+                      name="user"
                       value={user.id}
                       rounded="rounded-lg"
                     >
@@ -223,7 +232,9 @@
             </div>
           {/if}
 
-          {#if data.userPerms.canSetPermissions && data.permissions.length > 0}
+          {#if data.userPerms.canSetPermissions
+            && !data.role.protected
+          }
             <div class="flex flex-col">
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserLock} />
@@ -240,6 +251,7 @@
                 <ListBox multiple>
                   {#each data.permissions as permission}
                     <ListBoxItem
+                      on:change={_ => { $changed = true; }}
                       bind:group={$form.permission}
                       name="permission"
                       value={permission.name}
@@ -259,6 +271,22 @@
                 </ListBox>
               </div>
             </div>
+          {:else if data.userPerms.canSetPermissions
+            && data.role.protected
+          }
+            <ul class="list">
+              {#each rolePerms as permission}
+                <li>
+                  <span>
+                    <Fa fw icon={faUserLock} />
+                  </span>
+
+                  <span class="flex-auto">
+                    {$_(permission.name)}
+                  </span>
+                </li>
+              {/each}
+            </ul>
           {/if}
         </div>
       {/if}

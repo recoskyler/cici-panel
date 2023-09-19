@@ -8,7 +8,7 @@ import {
   toFullGroup, toFullUser, toSafeGroup,
 } from '$lib/server/granular-permissions/transform';
 import {
-  availableRolesQuery, fullGroupQuery, fullUserQuery, minOtherUsersQuery, safeGroupQuery,
+  availableRolesQuery, fullGroupQuery, fullUserQuery, minAllUsersQuery, safeGroupQuery,
 } from '$lib/server/queries';
 import {
   redirect, error, fail,
@@ -36,7 +36,7 @@ import {
   usersToGroups,
 } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { syncRolesByIdToGroup } from '$lib/server/granular-permissions/roles';
+import { syncRolesToGroup } from '$lib/server/granular-permissions/roles';
 import { syncUsersToGroup } from '$lib/server/granular-permissions/groups';
 import { groupUpdateLimiter } from '$lib/server/limiter';
 
@@ -48,7 +48,7 @@ const schema = insertGroupSchema
   .extend({
     user: z.array(z.string().length(15)),
     role: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -95,8 +95,9 @@ export const load: PageServerLoad = async event => {
   let permissions: Permission[] = [];
 
   if (userPerms.canSetUsers) {
-    users = await minOtherUsersQuery.execute({ currentUserId: session.user.userId });
-    users = users.filter(e => !e.deleted && e.verified);
+    users = await minAllUsersQuery.execute();
+    users = users.filter(e => !e.deleted && (e.verified || !ENABLE_EMAIL_VERIFICATION));
+    form.data.user = selectedGroup.users.map(e => e.id);
   } else {
     selectedGroup.users = [];
   }
@@ -168,22 +169,25 @@ export const actions: Actions = {
       await db.update(group).set({
         name: form.data.name,
         description: form.data.description,
-      });
+      }).where(eq(group.id, params.id));
 
       if (can(fullUser, ['read-list-roles', 'change-user-group-roles'])
         && ENABLE_GRANULAR_PERMISSIONS
       ) {
-        await syncRolesByIdToGroup(params.id, form.data.role);
+        await syncRolesToGroup(params.id, form.data.role);
       }
 
-      if (can(fullUser, 'change-user-permissions')
+      if (can(fullUser, 'change-user-group-permissions')
         && ENABLE_GRANULAR_PERMISSIONS
       ) {
         await syncPermissionsToGroup(params.id, form.data.permission);
       }
 
       if (can(fullUser, 'add-remove-user-group-members')) {
-        await syncUsersToGroup(form.data.user, params.id);
+        await syncUsersToGroup(
+          form.data.user,
+          params.id,
+        );
       }
     } catch (e) {
       console.error('Failed to update group');

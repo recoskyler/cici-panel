@@ -162,6 +162,12 @@
   </div>
 
   <div class="flex flex-row gap-2 flex-wrap mt-5">
+    {#if data.user.root}
+      <span class="badge variant-filled">
+        {$_('root')}
+      </span>
+    {/if}
+
     {#each data.user.allRoles as role}
       <span class="badge variant-ghost">
         {$_(role.name)}

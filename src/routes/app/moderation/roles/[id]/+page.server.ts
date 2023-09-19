@@ -10,7 +10,7 @@ import {
   availableGroupsQuery,
   fullRoleQuery,
   fullUserQuery,
-  minOtherUsersQuery,
+  minAllUsersQuery,
   safeRoleQuery,
 } from '$lib/server/queries';
 import {
@@ -50,7 +50,7 @@ const schema = insertRoleSchema
   .extend({
     user: z.array(z.string().length(15)),
     group: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -97,8 +97,8 @@ export const load: PageServerLoad = async event => {
   let permissions: Permission[] = [];
 
   if (userPerms.canSetUsers) {
-    users = await minOtherUsersQuery.execute({ currentUserId: session.user.userId });
-    users = users.filter(e => !e.deleted && e.verified);
+    users = await minAllUsersQuery.execute();
+    users = users.filter(e => !e.deleted && (e.verified || !ENABLE_EMAIL_VERIFICATION));
   } else {
     selectedRole.users = [];
   }
@@ -117,6 +117,10 @@ export const load: PageServerLoad = async event => {
 
   form.data.name = selectedRole.name;
   form.data.description = selectedRole.description;
+  form.data.user = selectedRole.users.map(e => e.id);
+  form.data.group = selectedRole.groups.map(e => e.id);
+
+  console.log(form.data);
 
   return {
     permissions,
@@ -163,20 +167,24 @@ export const actions: Actions = {
     if (!form.valid) {
       console.error('Form invalid');
       console.error(form.errors);
+      console.error(form.data);
       return fail(400, { form });
     }
 
     try {
-      await db.update(role).set({
+      const [dbRole] = await db.update(role).set({
         name: form.data.name,
         description: form.data.description,
-      });
+      }).where(eq(role.id, params.id)).returning();
 
       if (can(fullUser, 'change-user-roles')) {
-        await syncUsersToRole(form.data.user, params.id);
+        await syncUsersToRole(
+          form.data.user,
+          params.id,
+        );
       }
 
-      if (can(fullUser, 'change-user-permissions')) {
+      if (can(fullUser, 'change-role-permissions') && !dbRole.protected) {
         await syncPermissionsToRole(params.id, form.data.permission);
       }
 
@@ -186,6 +194,7 @@ export const actions: Actions = {
     } catch (e) {
       console.error('Failed to update role');
       console.error(e);
+      console.error(form.data);
 
       return setError(form, 'error.failed-to-save-changes');
     }

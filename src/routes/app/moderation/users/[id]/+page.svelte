@@ -27,7 +27,7 @@
   import Fa from 'svelte-fa';
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';
   import { writable } from 'svelte/store';
-  import { ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
+  import { ENABLE_EMAIL_VERIFICATION, ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
   // import { invalidate } from '$app/navigation';
 
   $currentPage = SITE_PAGE.MODERATION;
@@ -108,7 +108,11 @@
             class="input"
             title={$_('auth.display-name')}
             placeholder={$_('auth.display-name-placeholder')}
-            disabled={$delayed || data.user.deleted}
+            disabled={
+              $delayed
+              || data.user.deleted
+              || (data.isThemselves && !data.userPerms.canChangeOwnDetails)
+            }
             on:input={_ => {
               $changed = true;
             }}
@@ -131,7 +135,11 @@
             class="input"
             title={$_('auth.first-name')}
             placeholder={$_('auth.first-name-placeholder')}
-            disabled={$delayed || data.user.deleted}
+            disabled={
+              $delayed
+              || data.user.deleted
+              || (data.isThemselves && !data.userPerms.canChangeOwnDetails)
+            }
             on:input={_ => {
               $changed = true;
             }}
@@ -152,7 +160,11 @@
             class="input"
             title={$_('auth.last-name')}
             placeholder={$_('auth.last-name-placeholder')}
-            disabled={$delayed || data.user.deleted}
+            disabled={
+              $delayed
+              || data.user.deleted
+              || (data.isThemselves && !data.userPerms.canChangeOwnDetails)
+            }
             on:input={_ => {
               $changed = true;
             }}
@@ -173,7 +185,11 @@
             class="input"
             title={$_('auth.mobile')}
             placeholder={$_('auth.mobile-placeholder')}
-            disabled={$delayed || data.user.deleted}
+            disabled={
+              $delayed
+              || data.user.deleted
+              || (data.isThemselves && !data.userPerms.canChangeOwnDetails)
+            }
             on:input={_ => {
               $changed = true;
             }}
@@ -195,7 +211,11 @@
             title={$_('auth.email')}
             placeholder={$_('auth.email-placeholder')}
             autocomplete="email"
-            disabled={$delayed || data.user.deleted}
+            disabled={
+              $delayed
+              || data.user.deleted
+              || (data.isThemselves && !data.userPerms.canChangeOwnEmail)
+            }
             on:input={_ => {
               $changed = true;
             }}
@@ -220,7 +240,11 @@
               class="input"
               type={passwordVisible ? 'text' : 'password'}
               placeholder={$_('auth.new-password-placeholder')}
-              disabled={$delayed || data.user.deleted}
+              disabled={
+                $delayed
+                || data.user.deleted
+                || (data.isThemselves && !data.userPerms.canChangeOwnPassword)
+              }
               value={$form.password ?? ''}
               use:popup={passwordPopupFocusBlur}
               on:input={handleInput}
@@ -247,14 +271,17 @@
 
         <PasswordStrengthMeter password={$form.password ?? ''} />
 
-        <SlideToggle
-          name="verified"
-          bind:checked={$form.verified}
-          bgDark="bg-surface-400"
-          class="mt-10 mb-5"
-        >
-          {$_('do-not-require-email-verification-from-user')}
-        </SlideToggle>
+        {#if ENABLE_EMAIL_VERIFICATION && !data.isThemselves}
+          <SlideToggle
+            name="verified"
+            on:change={() => { $changed = true; }}
+            bind:checked={$form.verified}
+            bgDark="bg-surface-400"
+            class="mt-10 mb-5"
+          >
+            {$_('do-not-require-email-verification-from-user')}
+          </SlideToggle>
+        {/if}
       </div>
 
       {#if
@@ -428,7 +455,7 @@
     />
   </form>
 
-  {#if !data.user.deleted && data.userPerms.canDelete}
+  {#if !data.user.deleted && data.userPerms.canDelete && !data.user.root}
     <form
       action="?/delete"
       method="post"
@@ -449,7 +476,7 @@
         <FormError error={$deleteErrors._errors} />
       {/if}
     </form>
-  {:else if data.userPerms.canDelete}
+  {:else if data.userPerms.canDelete && !data.user.root}
     <form
       action="?/restore"
       method="post"

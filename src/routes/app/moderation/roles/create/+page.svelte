@@ -245,7 +245,7 @@
 
     <input
       type="submit"
-      value={$delayed ? $_('creating-group') : $_('create-group')}
+      value={$delayed ? $_('creating-role') : $_('create-role')}
       class={`btn mt-5 w-full ${
         $delayed ? 'variant-filled-surface' : 'variant-filled'
       }`}

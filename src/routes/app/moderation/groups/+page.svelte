@@ -58,15 +58,15 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th class="table-cell-fit">{$_('auth.name')}</th>
+            <th>{$_('auth.name')}</th>
             <th>{$_('description')}</th>
-
-            {#if data.perms.canViewUsers}
-              <th class="table-cell-fit">{$_('members')}</th>
-            {/if}
 
             {#if data.perms.canViewRoles && ENABLE_GRANULAR_PERMISSIONS}
               <th>{$_('roles')}</th>
+            {/if}
+
+            {#if data.perms.canViewUsers}
+              <th class="table-cell-fit">{$_('members')}</th>
             {/if}
 
             {#if data.perms.canEditGroups}
@@ -78,29 +78,31 @@
         <tbody>
           {#each paginatedSource as row}
             <tr>
-              <td class={`table-cell-fit ${row.deleted ? 'text-red-500' : ''}`}>
+              <td class={row.deleted ? 'text-red-500' : ''}>
                 {row.name}
               </td>
 
               <td class={`${row.deleted ? 'text-red-500' : ''}`}>
-                {row.description}
+                {row.description ?? ''}
               </td>
-
-              {#if data.perms.canViewUsers}
-                <td class="table-cell-fit">
-                  {row.users.length}
-                </td>
-              {/if}
 
               {#if data.perms.canViewRoles && ENABLE_GRANULAR_PERMISSIONS}
                 <td>
                   <div class="flex flex-row gap-2 flex-wrap">
                     {#each row.roles as role}
-                      <span class="badge variant-ghost">
-                        {$_(role.name)}
-                      </span>
+                      <a href={`/app/moderation/roles/${role.id}`}>
+                        <span class="badge variant-ghost">
+                          {role.name}
+                        </span>
+                      </a>
                     {/each}
                   </div>
+                </td>
+              {/if}
+
+              {#if data.perms.canViewUsers}
+                <td class="table-cell-fit">
+                  {row.users.length}
                 </td>
               {/if}
 

@@ -71,7 +71,7 @@
 <div
   class="flex mx-auto my-auto max-w-5xl items-stretch flex-col justify-center py-10 px-5 w-full"
 >
-  <form use:enhance method="post" class="w-full">
+  <form use:enhance method="post" class="w-full" action="?/save">
     <div
       class="flex mx-auto my-auto items-center lg:items-stretch gap-5
       flex-col lg:flex-row justify-evenly py-10 px-5 w-full"
@@ -92,6 +92,7 @@
             title={$_('name')}
             placeholder={$_('group-name-placeholder')}
             disabled={$delayed}
+            on:input={_ => { $changed = true; }}
             bind:value={$form.name}
             {...$constraints.name}
           /><br />
@@ -112,6 +113,7 @@
             title={$_('description')}
             placeholder={$_('group-description-placeholder')}
             disabled={$delayed}
+            on:input={_ => { $changed = true; }}
             bind:value={$form.description}
             {...$constraints.description}
           /><br />
@@ -147,8 +149,9 @@
                 <ListBox multiple>
                   {#each data.users as user}
                     <ListBoxItem
+                      on:change={_ => { $changed = true; }}
                       bind:group={$form.user}
-                      name="group"
+                      name="user"
                       value={user.id}
                       rounded="rounded-lg"
                     >
@@ -198,6 +201,7 @@
                 <ListBox multiple>
                   {#each data.roles as role}
                     <ListBoxItem
+                      on:change={_ => { $changed = true; }}
                       bind:group={$form.role}
                       name="role"
                       value={role.id}
@@ -247,6 +251,7 @@
                 <ListBox multiple>
                   {#each data.permissions as permission}
                     <ListBoxItem
+                      on:change={_ => { $changed = true; }}
                       bind:group={$form.permission}
                       name="permission"
                       value={permission.name}

@@ -48,7 +48,8 @@ export const actions: Actions = {
     }
 
     try {
-      const isFirstUser = !(await db.query.user.findFirst());
+      const isFirstUser = !(await db.query.user.findFirst())
+        || !(await db.query.usersToRoles.findFirst());
 
       const user = await auth.createUser({
         key: {
@@ -58,12 +59,13 @@ export const actions: Actions = {
         },
         attributes: {
           email: form.data.email.trim(),
-          verified: false,
+          verified: !ENABLE_EMAIL_VERIFICATION,
+          root: isFirstUser,
         },
       });
 
       if (isFirstUser) {
-        console.log('This is the first user. The first user will be made the administrator.');
+        console.log('This is the first user. The first user will be made the root user.');
 
         await seed();
 

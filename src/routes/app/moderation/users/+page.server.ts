@@ -1,6 +1,6 @@
 import { can } from '$lib/server/granular-permissions/permissions';
 import { toFullUser, toSafeUser } from '$lib/server/granular-permissions/transform';
-import { fullUserQuery, safeOtherUsersQuery } from '$lib/server/queries';
+import { fullUserQuery, safeAllUsersQuery } from '$lib/server/queries';
 import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { SafeUser } from '$lib/db/types';
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   };
 
   const users: SafeUser[] =
-    (await safeOtherUsersQuery.execute({ currentUserId: session.user.userId }))
+    (await safeAllUsersQuery.execute())
       .map(e => toSafeUser(e));
 
   if (!perms.canViewGroups) {

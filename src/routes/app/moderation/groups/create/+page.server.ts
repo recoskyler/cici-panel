@@ -4,7 +4,7 @@ import {
 import { can, syncPermissionsToGroup } from '$lib/server/granular-permissions/permissions';
 import { toFullUser } from '$lib/server/granular-permissions/transform';
 import {
-  availableRolesQuery, fullUserQuery, minOtherUsersQuery,
+  availableRolesQuery, fullUserQuery, minAllUsersQuery,
 } from '$lib/server/queries';
 import {
   redirect, error, fail,
@@ -23,7 +23,7 @@ import {
   group, groupsToPermissions, groupsToRoles, usersToGroups,
 } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { syncRolesByIdToGroup } from '$lib/server/granular-permissions/roles';
+import { syncRolesToGroup } from '$lib/server/granular-permissions/roles';
 import { syncUsersToGroup } from '$lib/server/granular-permissions/groups';
 import { groupCreateLimiter } from '$lib/server/limiter';
 
@@ -31,7 +31,7 @@ const schema = insertGroupSchema
   .extend({
     user: z.array(z.string().length(15)),
     role: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -62,8 +62,8 @@ export const load: PageServerLoad = async event => {
   let permissions: Permission[] = [];
 
   if (userPerms.canSetUsers) {
-    users = await minOtherUsersQuery.execute({ currentUserId: session.user.userId });
-    users = users.filter(e => !e.deleted && e.verified);
+    users = await minAllUsersQuery.execute();
+    users = users.filter(e => !e.deleted && (e.verified || !ENABLE_EMAIL_VERIFICATION));
   }
 
   if (userPerms.canSetRoles) {
@@ -121,10 +121,10 @@ export const actions: Actions = {
 
       createdId = dbGroup.id;
 
-      if (can(fullUser, ['read-list-roles', 'change-user-group-roles'])
+      if (can(fullUser, 'change-user-group-roles')
         && form.data.role.length > 0 && ENABLE_GRANULAR_PERMISSIONS
       ) {
-        await syncRolesByIdToGroup(createdId, form.data.role);
+        await syncRolesToGroup(createdId, form.data.role);
       }
 
       if (can(fullUser, 'change-user-permissions')
@@ -137,7 +137,7 @@ export const actions: Actions = {
         await syncUsersToGroup(form.data.user, createdId);
       }
     } catch (e) {
-      console.error('Failed to create new user');
+      console.error('Failed to create new group');
       console.error(e);
 
       if (createdId !== '') {

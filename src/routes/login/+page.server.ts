@@ -12,6 +12,7 @@ import { seed } from '$lib/db/seed';
 import { PERMISSIONS } from '$lib/server/constants';
 import { can } from '$lib/server/granular-permissions/permissions';
 import { toFullUser } from '$lib/server/granular-permissions/transform';
+import { db } from '$lib/server/drizzle';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -30,6 +31,10 @@ export const load: PageServerLoad = async event => {
 
   if (session) {
     throw redirect(302, '/app');
+  }
+
+  if (!(await db.query.user.findFirst())) {
+    throw redirect(302, '/signup');
   }
 
   const form = await superValidate(loginSchema);

@@ -81,6 +81,7 @@ export const actions: Actions = {
     const fullUser = toFullUser(dbUser);
 
     if (!can(fullUser, 'change-own-user-details')) throw error(403, 'forbidden');
+    if (fullUser.root) throw error(403, 'forbidden');
 
     const form = await superValidate(request, deleteAccountSchema);
 
@@ -310,7 +311,7 @@ export const load: PageServerLoad = async event => {
     canChangeEmail: can(fullUser, 'change-own-email-address'),
     canChangePassword: can(fullUser, 'change-own-password'),
     canChangeDetails: can(fullUser, 'change-own-user-details'),
-    canDeleteAccount: can(fullUser, 'delete-own-account'),
+    canDeleteAccount: can(fullUser, 'delete-own-account') && !fullUser.root,
   };
 
   const changePasswordForm = await superValidate(changePasswordSchema);

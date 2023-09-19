@@ -4,7 +4,9 @@ import {
   MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
 } from '$lib/constants';
-import { can, syncPermissionsToUser } from '$lib/server/granular-permissions/permissions';
+import {
+  can, clearUserPermissions, syncPermissionsToUser,
+} from '$lib/server/granular-permissions/permissions';
 import { toFullUser } from '$lib/server/granular-permissions/transform';
 import {
   availableGroupsQuery, availableRolesQuery, fullUserQuery,
@@ -28,8 +30,8 @@ import { isPasswordValid } from '$lib/functions/validators';
 import { auth } from '$lib/server/lucia';
 import { userConfig } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { syncRolesByIdToUser } from '$lib/server/granular-permissions/roles';
-import { syncGroupsToUser } from '$lib/server/granular-permissions/groups';
+import { clearUserRoles, syncRolesToUser } from '$lib/server/granular-permissions/roles';
+import { clearUserGroups, syncGroupsToUser } from '$lib/server/granular-permissions/groups';
 import { userCreateLimiter } from '$lib/server/limiter';
 
 const schema = insertUserSchema
@@ -38,7 +40,7 @@ const schema = insertUserSchema
     password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH),
     group: z.array(z.string().uuid()),
     role: z.array(z.string().uuid()),
-    permission: z.array(z.string().uuid()),
+    permission: z.array(z.string()),
   });
 
 export const load: PageServerLoad = async event => {
@@ -137,7 +139,7 @@ export const actions: Actions = {
         },
         attributes: {
           email: form.data.email.trim(),
-          verified: form.data.verified,
+          verified: form.data.verified ?? false,
         },
       });
 
@@ -156,15 +158,21 @@ export const actions: Actions = {
       configCreated = true;
 
       if (can(fullUser, 'change-user-roles') && form.data.role.length > 0) {
-        await syncRolesByIdToUser(createdId, form.data.role);
+        console.log('Setting user roles...');
+        await syncRolesToUser(createdId, form.data.role);
+        console.log('Set user roles');
       }
 
       if (can(fullUser, 'change-user-permissions') && form.data.permission.length > 0) {
+        console.log('Setting user permissions...');
         await syncPermissionsToUser(createdId, form.data.permission);
+        console.log('Set user permissions');
       }
 
       if (can(fullUser, 'add-remove-user-group-members') && form.data.group.length > 0) {
+        console.log('Setting user groups...');
         await syncGroupsToUser(form.data.group, createdId);
+        console.log('Set user groups');
       }
     } catch (e) {
       console.error('Failed to create new user');
@@ -175,6 +183,9 @@ export const actions: Actions = {
       }
 
       if (createdId !== '') {
+        await clearUserRoles(createdId);
+        await clearUserPermissions(createdId);
+        await clearUserGroups(createdId);
         await auth.deleteUser(createdId);
       }
 
