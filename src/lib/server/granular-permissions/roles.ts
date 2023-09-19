@@ -11,53 +11,53 @@ import { ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
 
 // Check roles
 
-export const hasDirectRole = (user: FullUser, role: string) => {
+export const hasDirectRole = (user: FullUser, roleId: string) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
   return user.directRoles.some(
-    r => r.name === role,
+    r => r.id === roleId,
   );
 };
 
-export const hasRole = (user: FullUser, role: string) => {
+export const hasRole = (user: FullUser, roleId: string) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
   return user.allRoles.some(
-    r => r.name === role,
+    r => r.id === roleId,
   );
 };
 
-export const hasAllDirectRoles = (user: FullUser, roles: string[]) => {
+export const hasAllDirectRoles = (user: FullUser, roleIds: string[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
-  if (roles.length === 0) return false;
+  if (roleIds.length === 0) return false;
 
-  return roles.every(
-    r => user.directRoles.some(e => e.name === r),
+  return roleIds.every(
+    r => user.directRoles.some(e => e.id === r),
   );
 };
 
-export const hasAllRoles = (user: FullUser, roles: string[]) => {
+export const hasAllRoles = (user: FullUser, roleIds: string[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
-  if (roles.length === 0) return false;
+  if (roleIds.length === 0) return false;
 
-  return roles.every(
-    r => user.allRoles.some(e => e.name === r),
+  return roleIds.every(
+    r => user.allRoles.some(e => e.id === r),
   );
 };
 
-export const hasAnyDirectRoles = (user: FullUser, roles: string[]) => {
+export const hasAnyDirectRoles = (user: FullUser, roleIds: string[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
-  if (roles.length === 0) return false;
+  if (roleIds.length === 0) return false;
 
-  return roles.some(
-    r => user.directRoles.some(e => e.name === r),
+  return roleIds.some(
+    r => user.directRoles.some(e => e.id === r),
   );
 };
 
-export const hasAnyRoles = (user: FullUser, roles: string[]) => {
+export const hasAnyRoles = (user: FullUser, roleIds: string[]) => {
   if (!ENABLE_GRANULAR_PERMISSIONS) return true;
-  if (roles.length === 0) return false;
+  if (roleIds.length === 0) return false;
 
-  return roles.some(
-    r => user.allRoles.some(e => e.name === r),
+  return roleIds.some(
+    r => user.allRoles.some(e => e.id === r),
   );
 };
 
@@ -65,7 +65,7 @@ export const hasAnyRoles = (user: FullUser, roles: string[]) => {
 
 export const assignRolesToUser = async (
   userId: string,
-  roles: string[],
+  roleIds: string[],
 ) => {
   const dbUser = await fullUserQuery.execute({ id: userId });
 
@@ -73,36 +73,16 @@ export const assignRolesToUser = async (
 
   const user = toFullUser(dbUser);
 
-  if (roles.length === 0) return;
-  if (hasAllRoles(user, roles)) return;
-
-  const missingRoles = roles.filter(e => !user.directRoles.some(p => p.name === e));
-
-  const dbRoles = await db.query.role
-    .findMany({ where: (role => inArray(role.name, missingRoles)) });
+  if (roleIds.length === 0) return;
+  if (hasAllRoles(user, roleIds)) return;
 
   await db.insert(usersToRoles)
-    .values(dbRoles.map(e => ({ roleId: e.id, userId: userId }))).onConflictDoNothing();
+    .values(roleIds.map(e => ({ roleId: e, userId: userId }))).onConflictDoNothing();
 };
 
 // Sync Roles
 
 export const syncRolesToUser = async (
-  userId: string,
-  roles: string[],
-) => {
-  const dbRoles = await db.query.role
-    .findMany({ where: (role => inArray(role.name, roles)) });
-
-  await db.delete(usersToRoles).where(eq(usersToRoles.userId, userId));
-
-  if (roles.length === 0) return;
-
-  await db.insert(usersToRoles)
-    .values(dbRoles.map(e => ({ roleId: e.id, userId: userId }))).onConflictDoNothing();
-};
-
-export const syncRolesByIdToUser = async (
   userId: string,
   roleIds: string[],
 ) => {
@@ -114,7 +94,7 @@ export const syncRolesByIdToUser = async (
     .values(roleIds.map(e => ({ roleId: e, userId: userId }))).onConflictDoNothing();
 };
 
-export const syncRolesByIdToGroup = async (
+export const syncRolesToGroup = async (
   groupId: string,
   roleIds: string[],
 ) => {
@@ -154,16 +134,13 @@ export const syncUsersToRole = async (
 
 export const removeRolesFromUser = async (
   userId: string,
-  roles: string[],
+  roleIds: string[],
 ) => {
-  if (roles.length === 0) return;
-
-  const dbRoles = await db.query.role
-    .findMany({ where: (role => inArray(role.name, roles)) });
+  if (roleIds.length === 0) return;
 
   await db.delete(usersToRoles).where(and(
     eq(usersToRoles.userId, userId),
-    inArray(usersToRoles.roleId, dbRoles.map(e => e.id)),
+    inArray(usersToRoles.roleId, roleIds),
   ));
 };
 
