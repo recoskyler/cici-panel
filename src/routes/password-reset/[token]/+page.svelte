@@ -10,7 +10,7 @@
   import FormSuccess from 'components/FormSuccess.svelte';
   import Fa from 'svelte-fa';
   import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { ENABLE_THEMES } from '$lib/constants';
 
   export let data: PageData;
@@ -31,7 +31,7 @@
 </script>
 
 <svelte:head>
-  <title>{$_('app-name')} | Reset password</title>
+  <title>{$t('common.app-name')} | Reset password</title>
 </svelte:head>
 
 <div class="login-cont mx-auto flex-col my-auto w-full px-5 py-10 max-w-sm">
@@ -62,7 +62,7 @@
         }}
         type="button"
         class="flex items-center justify-center"
-        title={ $_('auth.show-hide-password') }
+        title={ $t('auth.show-hide-password') }
         >
         <Fa fw icon={passwordVisible ? faEye : faEyeSlash} />
       </button>
@@ -90,7 +90,7 @@
 
   {#if $message}
     <a href="/login" class="btn variant-filled-primary w-full mt-5">
-      { $_('auth.back-to-login') }
+      { $t('auth.back-to-login') }
     </a>
   {/if}
 

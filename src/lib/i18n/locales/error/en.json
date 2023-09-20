@@ -1,0 +1,16 @@
+{
+    "failed-to-create-new-group": "Failed to create new group.",
+    "failed-to-create-new-role": "Failed to create new role.",
+    "failed-to-create-new-user": "Failed to create new user",
+    "failed-to-delete-user": "Failed to delete user.",
+    "failed-to-permanently-delete-user": "Failed to permanently delete user.",
+    "failed-to-restore-user": "Failed to restore user.",
+    "failed-to-save-changes": "Failed to save changes",
+    "group-not-found": "Group not found",
+    "password-does-not-meet-the-requirements-or-too-weak": "Password does not meet the requirements or too weak.",
+    "password-required-on-email-change": "User\\'s new or existing password is required in order to change the user\\'s email.",
+    "role-not-found": "Role not found",
+    "this-user-has-been-deleted": "This user has been deleted.",
+    "you-don-t-have-permission-to-change-your-own-email": "You don\\'t have permission to change your own email.",
+    "you-don-t-have-permission-to-change-your-own-password": "You don\\'t have permission to change your own password."
+}

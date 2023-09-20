@@ -6,7 +6,7 @@
     faListCheck, faUserGroup, faUsersCog,
   } from '@fortawesome/free-solid-svg-icons';
   import FeatureCard from 'components/FeatureCard.svelte';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import type { PageData } from './$types';
   import { ENABLE_GRANULAR_PERMISSIONS } from '$lib/constants';
 
@@ -19,14 +19,14 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.moderation')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.moderation')}</title>
 </svelte:head>
 
 <div class="flex p-5 flex-col lg:flex-row gap-3 max-w-3xl flex-wrap mx-auto my-auto items-center">
   {#if data.perms.canManageUsers}
     <FeatureCard
       icon={faUsersCog}
-      name={ $_('page-title.users') }
+      name={ $t('page-title.users') }
       description='Manage users'
       href='/app/moderation/users'
     />
@@ -35,7 +35,7 @@
   {#if data.perms.canManageGroups}
     <FeatureCard
       icon={faUserGroup}
-      name={ $_('page-title.groups') }
+      name={ $t('page-title.groups') }
       description='Manage user groups'
       href='/app/moderation/groups'
     />
@@ -44,7 +44,7 @@
   {#if data.perms.canManageRoles && ENABLE_GRANULAR_PERMISSIONS}
     <FeatureCard
       icon={faListCheck}
-      name={ $_('page-title.roles') }
+      name={ $t('page-title.roles') }
       description='Manage roles'
       href='/app/moderation/roles'
     />

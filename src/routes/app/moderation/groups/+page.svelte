@@ -2,7 +2,7 @@
   import { ENABLE_GRANULAR_PERMISSIONS, PER_PAGE } from '$lib/constants';
   import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
   import type { PageData } from './$types';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { canGoBack } from 'stores/canGoBack';
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { pageTitle } from 'stores/pageTitle';
@@ -33,24 +33,24 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.groups')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.groups')}</title>
 </svelte:head>
 
 <div class="max-w-7xl flex flex-col gap-5 mx-auto p-5 h-full">
   {#if data.groups.length === 0}
     <div class="mx-auto my-auto max-w-lg flex flex-col items-center gap-5">
       <p>
-        {$_('there-are-no-groups-yet')}
+        {$t('common.there-are-no-groups-yet')}
       </p>
 
       <a href="/app/moderation/groups/create" class="btn variant-filled-primary">
-        {$_('create-group')}
+        {$t('common.create-group')}
       </a>
     </div>
   {:else}
     <div class="flex justify-end w-full flex-row">
       <a href="/app/moderation/users/create" class="btn variant-filled-primary">
-        {$_('create-group')}
+        {$t('common.create-group')}
       </a>
     </div>
 
@@ -58,15 +58,15 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>{$_('auth.name')}</th>
-            <th>{$_('description')}</th>
+            <th>{$t('auth.name')}</th>
+            <th>{$t('common.description')}</th>
 
             {#if data.perms.canViewRoles && ENABLE_GRANULAR_PERMISSIONS}
-              <th>{$_('roles')}</th>
+              <th>{$t('common.roles')}</th>
             {/if}
 
             {#if data.perms.canViewUsers}
-              <th class="table-cell-fit">{$_('members')}</th>
+              <th class="table-cell-fit">{$t('common.members')}</th>
             {/if}
 
             {#if data.perms.canEditGroups}
@@ -119,7 +119,7 @@
                       <span>
                         <Fa fw icon={faEdit} />
                       </span>
-                      <span>{$_('edit')}</span>
+                      <span>{$t('common.edit')}</span>
                     </span>
                   </div>
                 </td>
@@ -137,7 +137,7 @@
         maxNumerals={5}
         showFirstLastButtons={false}
         showPreviousNextButtons={true}
-        amountText={$_('items')}
+        amountText={$t('common.items')}
       />
     {/if}
   {/if}

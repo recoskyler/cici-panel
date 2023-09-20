@@ -5,7 +5,7 @@
   import FormSuccess from 'components/FormSuccess.svelte';
   import { canGoBack } from 'stores/canGoBack';
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { pageTitle } from 'stores/pageTitle';
   import {
     faCheck,
@@ -35,7 +35,7 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.create-group')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.create-group')}</title>
 </svelte:head>
 
 <div
@@ -48,19 +48,19 @@
     >
       <div class="flex max-w-sm items-stretch flex-col w-full">
         <h3 class="h3 mb-5">
-          <strong>{$_('group-details')}</strong>
+          <strong>{$t('common.group-details')}</strong>
         </h3>
 
         <label for="name" class="label mb-2">
-          <span>{$_('name')}*</span>
+          <span>{$t('common.name')}*</span>
 
           <input
             id="name"
             name="name"
             type="text"
             class="input"
-            title={$_('name')}
-            placeholder={$_('group-name-placeholder')}
+            title={$t('common.name')}
+            placeholder={$t('common.group-name-placeholder')}
             disabled={$delayed}
             bind:value={$form.name}
             {...$constraints.name}
@@ -72,15 +72,15 @@
         </label>
 
         <label for="description" class="label mb-2 mt-5">
-          <span>{$_('description')}</span>
+          <span>{$t('common.description')}</span>
 
           <input
             id="description"
             name="description"
             type="text"
             class="input"
-            title={$_('description')}
-            placeholder={$_('group-description-placeholder')}
+            title={$t('common.description')}
+            placeholder={$t('common.group-description-placeholder')}
             disabled={$delayed}
             bind:value={$form.description}
             {...$constraints.description}
@@ -105,12 +105,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserGroup} />
                 <h3 class="h3">
-                  <strong>{$_('add-users-to-group')}</strong>
+                  <strong>{$t('common.add-users-to-group')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -156,12 +156,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserGear} />
                 <h3 class="h3">
-                  <strong>{$_('group-roles')}</strong>
+                  <strong>{$t('common.group-roles')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -205,12 +205,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserLock} />
                 <h3 class="h3">
-                  <strong>{$_('direct-group-permissions')}</strong>
+                  <strong>{$t('common.direct-group-permissions')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -225,7 +225,7 @@
                       <svelte:fragment slot="lead">
                         <Fa fw icon={faUserLock} />
                       </svelte:fragment>
-                      {$_(permission.name)}
+                      {$t(permission.name)}
                       <svelte:fragment slot="trail">
                         {#if $form.permission.includes(permission.name)}
                           <Fa fw icon={faCheck} />
@@ -253,7 +253,7 @@
 
     <input
       type="submit"
-      value={$delayed ? $_('creating-group') : $_('create-group')}
+      value={$delayed ? $t('common.creating-group') : $t('common.create-group')}
       class={`btn mt-5 w-full ${
         $delayed ? 'variant-filled-surface' : 'variant-filled'
       }`}

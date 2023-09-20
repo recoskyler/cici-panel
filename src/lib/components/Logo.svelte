@@ -1,11 +1,11 @@
 <script lang="ts">
   import logo from '$lib/assets/logo.svg';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 </script>
 
 <div class="logo flex flex-row items-center gap-2 justify-center m-0 p-0 !mb-0">
   <img src={logo} alt="Logo" id="logo-img">
-  <a href="/app" class="h3"><strong>{$_('app-name')}</strong></a>
+  <a href="/app" class="h3"><strong>{$t('common.app-name')}</strong></a>
 </div>
 
 <style lang="scss">

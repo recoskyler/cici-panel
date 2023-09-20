@@ -1,0 +1,8 @@
+{
+    "an-error-occurred-while-sending-the-email-verification-email": "An error occurred while sending the email verification email.",
+    "email-verification": "Email verification",
+    "email-verified": "Email verified",
+    "email-verified-message": "Yay! Your email has been verified.",
+    "failed-to-send-verification-email": "Failed to send verification email",
+    "sent-email-verification-token": "Sent email verification token"
+}

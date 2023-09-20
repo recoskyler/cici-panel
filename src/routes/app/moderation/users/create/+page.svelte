@@ -5,7 +5,7 @@
   import FormSuccess from 'components/FormSuccess.svelte';
   import { canGoBack } from 'stores/canGoBack';
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { pageTitle } from 'stores/pageTitle';
   import PasswordStrengthMeter from 'components/PasswordStrengthMeter/PasswordStrengthMeter.svelte';
   import {
@@ -51,7 +51,7 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.create-user')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.create-user')}</title>
 </svelte:head>
 
 <div
@@ -64,19 +64,19 @@
     >
       <div class="flex max-w-sm items-stretch flex-col w-full">
         <h3 class="h3 mb-5">
-          <strong>{$_('user-details')}</strong>
+          <strong>{$t('common.user-details')}</strong>
         </h3>
 
         <label for="displayname" class="label mb-2">
-          <span>{$_('auth.display-name')}*</span>
+          <span>{$t('auth.display-name')}*</span>
 
           <input
             id="displayname"
             name="displayname"
             type="text"
             class="input"
-            title={$_('auth.display-name')}
-            placeholder={$_('auth.display-name-placeholder')}
+            title={$t('auth.display-name')}
+            placeholder={$t('auth.display-name-placeholder')}
             disabled={$delayed}
             bind:value={$form.displayname}
             {...$constraints.displayname}
@@ -88,15 +88,15 @@
         </label>
 
         <label for="firstname" class="label mb-2 mt-5">
-          <span>{$_('auth.first-name')}*</span>
+          <span>{$t('auth.first-name')}*</span>
 
           <input
             id="firstname"
             name="firstname"
             type="text"
             class="input"
-            title={$_('auth.first-name')}
-            placeholder={$_('auth.first-name-placeholder')}
+            title={$t('auth.first-name')}
+            placeholder={$t('auth.first-name-placeholder')}
             disabled={$delayed}
             bind:value={$form.firstname}
             {...$constraints.firstname}
@@ -106,15 +106,15 @@
         </label>
 
         <label for="lastname" class="label mb-2 mt-5">
-          <span>{$_('auth.last-name')}</span>
+          <span>{$t('auth.last-name')}</span>
 
           <input
             id="lastname"
             name="lastname"
             type="text"
             class="input"
-            title={$_('auth.last-name')}
-            placeholder={$_('auth.last-name-placeholder')}
+            title={$t('auth.last-name')}
+            placeholder={$t('auth.last-name-placeholder')}
             disabled={$delayed}
             bind:value={$form.lastname}
             {...$constraints.lastname}
@@ -124,15 +124,15 @@
         </label>
 
         <label for="mobile" class="label mb-2 mt-5">
-          <span>{$_('auth.mobile')}</span>
+          <span>{$t('auth.mobile')}</span>
 
           <input
             id="mobile"
             name="mobile"
             type="text"
             class="input"
-            title={$_('auth.mobile')}
-            placeholder={$_('auth.mobile-placeholder')}
+            title={$t('auth.mobile')}
+            placeholder={$t('auth.mobile-placeholder')}
             disabled={$delayed}
             bind:value={$form.mobile}
             {...$constraints.mobile}
@@ -142,15 +142,15 @@
         </label>
 
         <label for="email" class="label mb-2 mt-5">
-          <span>{$_('auth.email')}*</span>
+          <span>{$t('auth.email')}*</span>
 
           <input
             id="email"
             name="email"
             type="email"
             class="input"
-            title={$_('auth.email')}
-            placeholder={$_('auth.email-placeholder')}
+            title={$t('auth.email')}
+            placeholder={$t('auth.email-placeholder')}
             autocomplete="email"
             disabled={$delayed}
             bind:value={$form.email}
@@ -161,7 +161,7 @@
         </label>
 
         <label for="password" class="label mb-2 mt-5">
-          <span>{$_('auth.password')}*</span>
+          <span>{$t('auth.password')}*</span>
 
           <PasswordPopup password={$form.password} />
 
@@ -173,7 +173,7 @@
               name="password"
               class="input"
               type={passwordVisible ? 'text' : 'password'}
-              placeholder={$_('auth.password')}
+              placeholder={$t('auth.password')}
               disabled={$delayed}
               value={$form.password}
               use:popup={passwordPopupFocusBlur}
@@ -188,7 +188,7 @@
               }}
               type="button"
               class="flex items-center justify-center"
-              title={$_('auth.show-hide-password')}
+              title={$t('auth.show-hide-password')}
             >
               <Fa fw icon={passwordVisible ? faEye : faEyeSlash} />
             </button>
@@ -208,7 +208,7 @@
             bgDark="bg-surface-400"
             class="mt-10 mb-5"
           >
-            {$_('do-not-require-email-verification-from-user')}
+            {$t('common.do-not-require-email-verification-from-user')}
           </SlideToggle>
         {/if}
       </div>
@@ -226,12 +226,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserGroup} />
                 <h3 class="h3">
-                  <strong>{$_('add-user-to-groups')}</strong>
+                  <strong>{$t('common.add-user-to-groups')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -275,12 +275,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserGear} />
                 <h3 class="h3">
-                  <strong>{$_('user-roles')}</strong>
+                  <strong>{$t('common.user-roles')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -324,12 +324,12 @@
               <div class="flex flex-row gap-5 items-center">
                 <Fa fw icon={faUserLock} />
                 <h3 class="h3">
-                  <strong>{$_('direct-user-permissions')}</strong>
+                  <strong>{$t('common.direct-user-permissions')}</strong>
                 </h3>
               </div>
 
               <p class="text-slate-600 dark:text-slate-400">
-                {$_('select-none-one-or-multiple')}
+                {$t('common.select-none-one-or-multiple')}
               </p>
 
               <div class="py-4 px-2 border-2 border-slate-600 rounded-lg mt-5">
@@ -344,7 +344,7 @@
                       <svelte:fragment slot="lead">
                         <Fa fw icon={faUserLock} />
                       </svelte:fragment>
-                      {$_(permission.name)}
+                      {$t(permission.name)}
                       <svelte:fragment slot="trail">
                         {#if $form.permission.includes(permission.name)}
                           <Fa fw icon={faCheck} />
@@ -372,7 +372,7 @@
 
     <input
       type="submit"
-      value={$delayed ? $_('creating-user') : $_('create-user')}
+      value={$delayed ? $t('common.creating-user') : $t('common.create-user')}
       class={`btn mt-5 w-full ${
         $delayed ? 'variant-filled-surface' : 'variant-filled'
       }`}

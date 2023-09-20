@@ -1,5 +1,4 @@
 {
-    "i18n-ally.keystyle": "nested",
     "typescript.tsdk": "node_modules/typescript/lib",
     "cSpell.words": [
         "cici",
@@ -10,7 +9,6 @@
         "verif",
         "writables"
     ],
-    "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -30,14 +28,17 @@
         "drizzle": true
     },
     "explorerExclude.backup": {},
-    "i18n-ally.extract.ignoredByFiles": {
-        "src/routes/app/moderation/users/create/+page.svelte": [
-            " {\n                e.preventDefault();\n                passwordVisible = !passwordVisible;\n              }}\n              type=\"button\"\n              class=\"flex items-center justify-center\"\n              title={$_('auth.show-hide-password')}\n            >\n              "
-        ]
-    },
-    "i18n-ally.extract.ignored": [
-        "\n\n      {#if\n        (\n          data.userPerms.canSetGroups\n          || data.userPerms.canSetRoles\n          || data.userPerms.canSetPermissions\n        ) ",
-        "&",
-        "&"
-    ]
+    "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
+    "i18n-ally.dirStructure": "dir",
+    "i18n-ally.namespace": true,
+    "i18n-ally.pathMatcher": "{namespace}/{locale}.{ext}",
+    "i18n-ally.disabled": false,
+    "i18n-ally.autoDetection": true,
+    "i18n-ally.disablePathParsing": false,
+    "i18n-ally.extract.targetPickingStrategy": "most-similar",
+    "i18n-ally.fullReloadOnChanged": false,
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.review.gutters": false,
+    "i18n-ally.review.enabled": false,
+    "i18n-ally.sortKeys": true
 }

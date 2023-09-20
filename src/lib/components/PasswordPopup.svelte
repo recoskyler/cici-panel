@@ -1,6 +1,6 @@
 <script lang="ts">
   import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '$lib/constants';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 
   export let password: string;
 
@@ -15,9 +15,9 @@
 </script>
 
 <div class="card p-4 variant-filled max-w-xs z-50" data-popup="popupFocusBlur">
-  <p><strong>{$_('password-recommendations')}</strong></p>
+  <p><strong>{$t('common.password-recommendations')}</strong></p>
   <br />
-  <p>{$_('password-popup-info')}</p>
+  <p>{$t('common.password-popup-info')}</p>
   <br />
 
   <ul>
@@ -31,7 +31,7 @@
       <span class="text-sm">
         {password.length === 0 || !isLengthValid(password) ? '❌' : '🟢'}
       </span>
-      {$_('password-min-max-long', { values: { min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH } })}
+      {$t('password-min-max-long', { values: { min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH } })}
     </li>
 
     <li
@@ -44,7 +44,7 @@
       <span class="text-sm">
         {password.length === 0 || !containsLowercase(password) ? '❌' : '🟢'}
       </span>
-      {$_('minimum-1-lowercase-letter-a-z')}
+      {$t('minimum-1-lowercase-letter-a-z')}
     </li>
 
     <li
@@ -57,7 +57,7 @@
       <span class="text-sm">
         {password.length === 0 || !containsUppercase(password) ? '❌' : '🟢'}
       </span>
-      {$_('minimum-1-uppercase-letter-a-z')}
+      {$t('minimum-1-uppercase-letter-a-z')}
     </li>
 
     <li
@@ -70,7 +70,7 @@
       <span class="text-sm">
         {password.length === 0 || !containsNumber(password) ? '❌' : '🟢'}
       </span>
-      {$_('minimum-1-number-0-9')}
+      {$t('minimum-1-number-0-9')}
     </li>
 
     <li
@@ -83,7 +83,7 @@
       <span class="text-sm">
         {password.length === 0 || !containsSpecial(password) ? '❌' : '🟢'}
       </span>
-      {$_('minimum-1-special-character')}
+      {$t('minimum-1-special-character')}
     </li>
   </ul>
 

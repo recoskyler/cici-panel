@@ -4,7 +4,7 @@
   } from '$lib/constants';
   import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
   import type { PageData } from './$types';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { canGoBack } from 'stores/canGoBack';
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { pageTitle } from 'stores/pageTitle';
@@ -38,24 +38,24 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.users')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.users')}</title>
 </svelte:head>
 
 <div class="max-w-7xl flex flex-col gap-5 mx-auto p-5 h-full">
   {#if data.users.length === 0}
     <div class="mx-auto my-auto max-w-lg flex flex-col items-center gap-5">
       <p>
-        {$_('there-are-no-users-yet')}
+        {$t('common.there-are-no-users-yet')}
       </p>
 
       <a href="/app/moderation/users/create" class="btn variant-filled-primary">
-        {$_('create-user')}
+        {$t('common.create-user')}
       </a>
     </div>
   {:else}
     <div class="flex justify-end w-full flex-row">
       <a href="/app/moderation/users/create" class="btn variant-filled-primary">
-        {$_('create-user')}
+        {$t('common.create-user')}
       </a>
     </div>
 
@@ -65,17 +65,17 @@
           <tr>
             <th class="table-cell-fit"></th>
 
-            <th class="table-cell-fit">{$_('auth.display-name')}</th>
-            <th class="table-cell-fit">{$_('auth.first-name')}</th>
-            <th class="table-cell-fit">{$_('auth.last-name')}</th>
-            <th class="table-cell-fit">{$_('auth.email')}</th>
+            <th class="table-cell-fit">{$t('auth.display-name')}</th>
+            <th class="table-cell-fit">{$t('auth.first-name')}</th>
+            <th class="table-cell-fit">{$t('auth.last-name')}</th>
+            <th class="table-cell-fit">{$t('auth.email')}</th>
 
             {#if data.perms.canViewGroups}
-              <th>{$_('groups')}</th>
+              <th>{$t('common.groups')}</th>
             {/if}
 
             {#if data.perms.canViewRoles && ENABLE_GRANULAR_PERMISSIONS}
-              <th>{$_('roles')}</th>
+              <th>{$t('common.roles')}</th>
             {/if}
 
             {#if data.perms.canEditUsers}
@@ -160,7 +160,7 @@
                       <span>
                         <Fa fw icon={faEdit} />
                       </span>
-                      <span>{$_('edit')}</span>
+                      <span>{$t('common.edit')}</span>
                     </span>
                   </div>
                 </td>
@@ -178,7 +178,7 @@
         maxNumerals={5}
         showFirstLastButtons={false}
         showPreviousNextButtons={true}
-        amountText={$_('items')}
+        amountText={$t('common.items')}
       />
     {/if}
   {/if}

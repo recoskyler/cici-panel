@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 </script>
 
 <svelte:head>
-  <title>{$_('app-name')} | Cookie Policy</title>
+  <title>{$t('common.app-name')} | Cookie Policy</title>
 </svelte:head>
 
 <div
   class="text-black bg-white flex flex-col p-10 gap-5 h-screen overflow-y-auto"
 >
-  <h1 class="h1">Cookie Policy for {$_('app-name')}</h1>
+  <h1 class="h1">Cookie Policy for {$t('common.app-name')}</h1>
 
   <p>
-    This is the Cookie Policy for {$_('app-name')}, accessible from https://{$_(
+    This is the Cookie Policy for {$t('common.app-name')}, accessible from https://{$t(
       'app-name',
     )}.recoskyler.com
   </p>

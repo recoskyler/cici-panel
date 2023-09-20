@@ -1,0 +1,15 @@
+{
+    "create-group": "Create group",
+    "create-role": "Create role",
+    "create-user": "Create user",
+    "edit-group": "Edit group",
+    "edit-role": "Edit role",
+    "edit-user": "Edit user",
+    "groups": "Groups",
+    "home": "Home",
+    "moderation": "Moderation",
+    "permissions": "Permissions",
+    "profile": "Profile",
+    "roles": "Roles",
+    "users": "Users"
+}

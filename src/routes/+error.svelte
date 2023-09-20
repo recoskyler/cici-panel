@@ -1,6 +1,6 @@
 <script>
   import { page } from '$app/stores';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 </script>
 
 <div
@@ -9,6 +9,6 @@
   <strong class="h1 text-red-400">{$page?.status ?? '500'}</strong>
 
   <span class="h2 text-red-400">
-    {$_($page?.error?.message ?? 'an_error_occurred')}
+    {$t($page?.error?.message ?? 'an_error_occurred')}
   </span>
 </div>

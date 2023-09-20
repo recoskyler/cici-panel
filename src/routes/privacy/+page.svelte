@@ -1,10 +1,10 @@
 <script lang='ts'>
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 </script>
 
 <!-- eslint-disable max-len -->
 <svelte:head>
-  <title>{$_('app-name')} | {$_('privacy-policy')}</title>
+  <title>{$t('common.app-name')} | {$t('common.privacy-policy')}</title>
 </svelte:head>
 
 <div class="text-black bg-white h-screen overflow-y-auto p-10">

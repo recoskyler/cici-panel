@@ -4,7 +4,7 @@
     Stepper, Step, LightSwitch,
   } from '@skeletonlabs/skeleton';
   import { superForm } from 'sveltekit-superforms/client';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import {
     ENABLE_THEMES,
     MAX_DISPLAY_NAME_LENGTH,
@@ -22,7 +22,7 @@
   export let data: PageData;
 
   const { form, errors, constraints, enhance, delayed } = superForm(data.form);
-  const appName = $_('app-name') as string;
+  const appName = $t('common.app-name') as string;
 
   const onComplete = () => {
     const submitButton = document.getElementById('submit-btn');
@@ -42,16 +42,16 @@
   >
     <Step>
       <svelte:fragment slot="header">
-        {$_('setup.welcome-msg', { values: { place: appName } })}
+        {$t('setup.welcome-msg', { values: { place: appName } })}
       </svelte:fragment>
 
-      {$_('setup.lets-get-started-with-your-user-account-setup')}
+      {$t('setup.lets-get-started-with-your-user-account-setup')}
     </Step>
 
     <Step>
-      <svelte:fragment slot="header">{$_('setup.what-is-this-app')}</svelte:fragment>
+      <svelte:fragment slot="header">{$t('setup.what-is-this-app')}</svelte:fragment>
 
-      {$_('setup.app-description')}
+      {$t('setup.app-description')}
     </Step>
 
     <Step
@@ -60,19 +60,19 @@
         ($form.displayname ?? '').trim().length > MAX_DISPLAY_NAME_LENGTH}
     >
       <svelte:fragment slot="header"
-        >{$_('setup.what-should-we-call-you')}</svelte:fragment
+        >{$t('setup.what-should-we-call-you')}</svelte:fragment
       >
 
       <label for="displayname" class="label mb-2">
-        <span>{$_('auth.display-name')}*</span>
+        <span>{$t('auth.display-name')}*</span>
 
         <input
           id="displayname"
           name="displayname"
           type="text"
           class="input"
-          title={$_('auth.display-name')}
-          placeholder={$_('auth.display-name-placeholder')}
+          title={$t('auth.display-name')}
+          placeholder={$t('auth.display-name-placeholder')}
           disabled={$delayed}
           bind:value={$form.displayname}
           {...$constraints.displayname}
@@ -90,19 +90,19 @@
         ($form.firstname ?? '').trim().length > MAX_FIRST_NAME_LENGTH}
     >
       <svelte:fragment slot="header">
-        {$_('setup.what-is-your-first-name')}
+        {$t('setup.what-is-your-first-name')}
       </svelte:fragment>
 
       <label for="firstname" class="label mb-2">
-        <span>{$_('auth.first-name')}*</span>
+        <span>{$t('auth.first-name')}*</span>
 
         <input
           id="firstname"
           name="firstname"
           type="text"
           class="input"
-          title={$_('auth.first-name')}
-          placeholder={$_('auth.first-name-placeholder')}
+          title={$t('auth.first-name')}
+          placeholder={$t('auth.first-name-placeholder')}
           disabled={$delayed}
           bind:value={$form.firstname}
           {...$constraints.firstname}
@@ -120,19 +120,19 @@
           ($form.lastname ?? '').trim().length > MAX_LAST_NAME_LENGTH)}
     >
       <svelte:fragment slot="header">
-        {$_('setup.what-is-your-last-name-optional')}
+        {$t('setup.what-is-your-last-name-optional')}
       </svelte:fragment>
 
       <label for="lastname" class="label mb-2">
-        <span>{$_('auth.last-name')}</span>
+        <span>{$t('auth.last-name')}</span>
 
         <input
           id="lastname"
           name="lastname"
           type="text"
           class="input"
-          title={$_('auth.last-name')}
-          placeholder={$_('auth.last-name-placeholder')}
+          title={$t('auth.last-name')}
+          placeholder={$t('auth.last-name-placeholder')}
           disabled={$delayed}
           bind:value={$form.lastname}
           {...$constraints.lastname}
@@ -148,19 +148,19 @@
           ($form.mobile ?? '').trim().length > MAX_MOBILE_LENGTH)}
     >
       <svelte:fragment slot="header">
-        {$_('setup.what-is-your-mobile-number-optional')}
+        {$t('setup.what-is-your-mobile-number-optional')}
       </svelte:fragment>
 
       <label for="mobile" class="label mb-2">
-        <span>{$_('auth.mobile')}</span>
+        <span>{$t('auth.mobile')}</span>
 
         <input
           id="mobile"
           name="mobile"
           type="text"
           class="input"
-          title={$_('auth.mobile')}
-          placeholder={$_('auth.mobile-placeholder')}
+          title={$t('auth.mobile')}
+          placeholder={$t('auth.mobile-placeholder')}
           disabled={$delayed}
           bind:value={$form.mobile}
           {...$constraints.mobile}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 
   export let message: string | string[] | undefined;
 </script>
@@ -13,7 +13,7 @@
       class="text-center text-green-600 dark:text-green-400 my-3 break-words w-full max-w-xs mx-auto"
       transition:fade
     >
-      {$_(message)}
+      {$t(message)}
     </p>
   {:else}
     <div class="flex flex-col gap-3 items-center">
@@ -22,7 +22,7 @@
           class="text-center text-green-600 dark:text-green-400 my-3 break-words w-full max-w-xs mx-auto"
           transition:fade
         >
-          {$_(msg)}
+          {$t(msg)}
         </p>
       {/each}
     </div>

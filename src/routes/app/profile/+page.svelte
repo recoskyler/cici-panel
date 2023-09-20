@@ -26,7 +26,7 @@
   import { canGoBack } from 'stores/canGoBack';
   import { SITE_PAGE, currentPage } from 'stores/currentPage';
   import { toTitleCase } from '$lib/functions/helper';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import FieldsRequiredInfo from 'components/FieldsRequiredInfo.svelte';
   import { PUBLIC_GITHUB_LINK } from '$env/static/public';
   import { ENABLE_THEMES } from '$lib/constants';
@@ -135,7 +135,7 @@
 
 <svelte:head>
   <meta name="robots" content="noindex" />
-  <title>{$_('app-name')} | {$_('page-title.profile')}</title>
+  <title>{$t('common.app-name')} | {$t('page-title.profile')}</title>
 </svelte:head>
 
 <main
@@ -164,13 +164,13 @@
   <div class="flex flex-row gap-2 flex-wrap mt-5">
     {#if data.user.root}
       <span class="badge variant-filled">
-        {$_('root')}
+        {$t('common.root')}
       </span>
     {/if}
 
     {#each data.user.allRoles as role}
       <span class="badge variant-ghost">
-        {$_(role.name)}
+        {$t(role.name)}
       </span>
     {/each}
   </div>
@@ -190,20 +190,20 @@
           <Fa fw icon={faIdBadge} />
         </svelte:fragment>
 
-        <svelte:fragment slot="summary">{$_('change-details')}</svelte:fragment>
+        <svelte:fragment slot="summary">{$t('common.change-details')}</svelte:fragment>
 
         <svelte:fragment slot="content">
           <form use:cnEnhance action="?/changeUserConfig" method="post">
             <label for="displayname" class="label mb-2">
-              <span>{$_('auth.display-name')}*</span>
+              <span>{$t('auth.display-name')}*</span>
 
               <input
                 id="displayname"
                 name="displayname"
                 type="text"
                 class="input"
-                title={$_('auth.display-name')}
-                placeholder={$_('auth.display-name-placeholder')}
+                title={$t('auth.display-name')}
+                placeholder={$t('auth.display-name-placeholder')}
                 disabled={$cnDelayed}
                 bind:value={$cnForm.displayname}
                 {...$cnConstraints.displayname}
@@ -215,15 +215,15 @@
             </label>
 
             <label for="firstname" class="label mb-2">
-              <span>{$_('auth.first-name')}*</span>
+              <span>{$t('auth.first-name')}*</span>
 
               <input
                 id="firstname"
                 name="firstname"
                 type="text"
                 class="input"
-                title={$_('auth.first-name')}
-                placeholder={$_('auth.first-name-placeholder')}
+                title={$t('auth.first-name')}
+                placeholder={$t('auth.first-name-placeholder')}
                 disabled={$cnDelayed}
                 bind:value={$cnForm.firstname}
                 {...$cnConstraints.firstname}
@@ -235,15 +235,15 @@
             </label>
 
             <label for="lastname" class="label mb-2">
-              <span>{$_('auth.last-name')}</span>
+              <span>{$t('auth.last-name')}</span>
 
               <input
                 id="lastname"
                 name="lastname"
                 type="text"
                 class="input"
-                title={$_('auth.last-name')}
-                placeholder={$_('auth.last-name-placeholder')}
+                title={$t('auth.last-name')}
+                placeholder={$t('auth.last-name-placeholder')}
                 disabled={$cnDelayed}
                 bind:value={$cnForm.lastname}
                 {...$cnConstraints.lastname}
@@ -255,15 +255,15 @@
             </label>
 
             <label for="mobile" class="label mb-2">
-              <span>{$_('auth.mobile')}</span>
+              <span>{$t('auth.mobile')}</span>
 
               <input
                 id="mobile"
                 name="mobile"
                 type="tel"
                 class="input"
-                title={$_('auth.mobile')}
-                placeholder={$_('auth.mobile-placeholder')}
+                title={$t('auth.mobile')}
+                placeholder={$t('auth.mobile-placeholder')}
                 disabled={$cnDelayed}
                 bind:value={$cnForm.mobile}
                 {...$cnConstraints.mobile}
@@ -284,7 +284,7 @@
 
             <input
               type="submit"
-              value={$cnDelayed ? $_('saving') : $_('save')}
+              value={$cnDelayed ? $t('common.saving') : $t('common.save')}
               class={`btn mt-5 w-full ${
                 $cnDelayed ? 'variant-filled-surface' : 'variant-filled'
               }`}
@@ -301,20 +301,20 @@
           <Fa fw icon={faEnvelope} />
         </svelte:fragment>
 
-        <svelte:fragment slot="summary">{$_('change-email')}</svelte:fragment>
+        <svelte:fragment slot="summary">{$t('common.change-email')}</svelte:fragment>
 
         <svelte:fragment slot="content">
           <form use:ceEnhance action="?/changeEmail" method="post">
             <label class="label mb-3 mt-5">
-              <span>{$_('auth.current-password')}*</span>
+              <span>{$t('auth.current-password')}*</span>
 
               <div class="input-group input-group-divider grid-cols-[1fr_auto]">
                 <input
                   name="password"
                   class="input"
                   type={ceCurrentPwVisible ? 'text' : 'password'}
-                  aria-label={$_('auth.current-password')}
-                  placeholder={$_('auth.current-password-placeholder')}
+                  aria-label={$t('auth.current-password')}
+                  placeholder={$t('auth.current-password-placeholder')}
                   disabled={$ceDelayed}
                   value={$ceForm.password}
                   on:input={handleCECurrentPasswordInput}
@@ -339,14 +339,14 @@
             </label>
 
             <label class="label">
-              <span>{$_('new-email')}*</span>
+              <span>{$t('common.new-email')}*</span>
 
               <input
                 name="email"
                 class="input"
                 type="email"
-                placeholder={$_('auth.email-placeholder')}
-                aria-label={$_('auth.email')}
+                placeholder={$t('auth.email-placeholder')}
+                aria-label={$t('auth.email')}
                 disabled={$ceDelayed}
                 bind:value={$ceForm.email}
                 {...$ceConstraints.email}
@@ -369,7 +369,7 @@
 
             <input
               type="submit"
-              value={$ceDelayed ? $_('saving') : $_('change-email')}
+              value={$ceDelayed ? $t('common.saving') : $t('common.change-email')}
               class={`btn mt-5 w-full ${
                 $ceDelayed ? 'variant-filled-surface' : 'variant-filled'
               }`}
@@ -386,21 +386,21 @@
           <Fa fw icon={faKey} />
         </svelte:fragment>
 
-        <svelte:fragment slot="summary">{$_('change-password')}</svelte:fragment
+        <svelte:fragment slot="summary">{$t('common.change-password')}</svelte:fragment
         >
 
         <svelte:fragment slot="content">
           <form use:cpEnhance action="?/changePassword" method="post">
             <label class="label mb-3 mt-5">
-              <span>{$_('auth.current-password')}*</span>
+              <span>{$t('auth.current-password')}*</span>
 
               <div class="input-group input-group-divider grid-cols-[1fr_auto]">
                 <input
                   name="currentPassword"
                   class="input"
                   type={cpCurrentPwVisible ? 'text' : 'password'}
-                  aria-label={$_('auth.current-password')}
-                  placeholder={$_('auth.current-password-placeholder')}
+                  aria-label={$t('auth.current-password')}
+                  placeholder={$t('auth.current-password-placeholder')}
                   disabled={$cpDelayed}
                   value={$cpForm.currentPassword}
                   on:input={handleCPCurrentPasswordInput}
@@ -427,14 +427,14 @@
             <PasswordPopup password={$cpForm.password} />
 
             <label class="label">
-              <span>{$_('auth.new-password')}*</span>
+              <span>{$t('auth.new-password')}*</span>
 
               <div class="input-group input-group-divider grid-cols-[1fr_auto]">
                 <input
                   name="password"
                   class="input"
                   type={cpNewPwVisible ? 'text' : 'password'}
-                  placeholder={$_('auth.new-password-placeholder')}
+                  placeholder={$t('auth.new-password-placeholder')}
                   disabled={$cpDelayed}
                   value={$cpForm.password}
                   use:popup={passwordPopupFocusBlur}
@@ -473,7 +473,7 @@
 
             <input
               type="submit"
-              value={$cpDelayed ? $_('saving') : $_('change-password')}
+              value={$cpDelayed ? $t('common.saving') : $t('common.change-password')}
               class={`btn mt-5 w-full ${
                 $cpDelayed ? 'variant-filled-surface' : 'variant-filled'
               }`}
@@ -492,30 +492,30 @@
 
         <svelte:fragment slot="summary">
           <span class="text-red-600 dark:text-red-400"
-            >{$_('delete-account')}</span
+            >{$t('common.delete-account')}</span
           >
         </svelte:fragment>
 
         <svelte:fragment slot="content">
           <p>
             <span class="text-orange-600 dark:text-orange-400">
-              <strong>{$_('warning')} </strong>
+              <strong>{$t('common.warning')} </strong>
             </span>
 
-            {$_('delete-account-warning')}
+            {$t('common.delete-account-warning')}
           </p>
 
           <form use:daEnhance method="post" action="?/delete">
             <label class="label mb-3 mt-5">
-              <span>{$_('auth.current-password')}*</span>
+              <span>{$t('auth.current-password')}*</span>
 
               <div class="input-group input-group-divider grid-cols-[1fr_auto]">
                 <input
                   name="password"
                   class="input"
                   type={daCurrentPwVisible ? 'text' : 'password'}
-                  aria-label={$_('auth.current-password')}
-                  placeholder={$_('auth.current-password-placeholder')}
+                  aria-label={$t('auth.current-password')}
+                  placeholder={$t('auth.current-password-placeholder')}
                   disabled={$daDelayed}
                   value={$daForm.password}
                   on:input={handleDACurrentPasswordInput}
@@ -540,7 +540,7 @@
             </label>
 
             <label class="label mb-3 mt-5">
-              <span>{$_('confirmation')}*</span>
+              <span>{$t('common.confirmation')}*</span>
 
               <input
                 name="confirmation"
@@ -569,7 +569,7 @@
 
             <input
               type="submit"
-              value={$daDelayed ? $_('exterminating') : $_('delete-account')}
+              value={$daDelayed ? $t('common.exterminating') : $t('common.delete-account')}
               class={`btn mt-5 w-full ${
                 $daDelayed ? 'variant-filled-surface' : 'variant-filled-error'
               }`}
@@ -597,7 +597,7 @@
       rel="noopener noreferrer"
       class="anchor text-center"
     >
-      {toTitleCase($_('privacy-policy'))}
+      {toTitleCase($t('common.privacy-policy'))}
     </a>
 
     <a
@@ -606,7 +606,7 @@
       rel="noopener noreferrer"
       class="anchor text-center"
     >
-      {toTitleCase($_('disclaimer'))}
+      {toTitleCase($t('common.disclaimer'))}
     </a>
 
     <a
@@ -615,7 +615,7 @@
       rel="noopener noreferrer"
       class="anchor text-center"
     >
-      {toTitleCase($_('cookie-policy'))}
+      {toTitleCase($t('common.cookie-policy'))}
     </a>
 
     <a
@@ -624,7 +624,7 @@
       rel="noopener noreferrer"
       class="anchor text-center"
     >
-      {toTitleCase($_('license'))}
+      {toTitleCase($t('common.license'))}
     </a>
 
     <a
@@ -633,7 +633,7 @@
       rel="noopener noreferrer"
       class="anchor text-center"
     >
-      {toTitleCase($_('source-code'))}
+      {toTitleCase($t('common.source-code'))}
     </a>
   </div>
 </main>

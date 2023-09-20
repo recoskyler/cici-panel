@@ -1,9 +1,9 @@
 <script lang='ts'>
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
 </script>
 
 <svelte:head>
-  <title>{$_('app-name')} | {$_('disclaimer')}</title>
+  <title>{$t('common.app-name')} | {$t('common.disclaimer')}</title>
 </svelte:head>
 
 <div class="flex flex-col gap-5 p-10 h-screen text-black bg-white">
@@ -14,8 +14,8 @@
   <h2 class="h2">WEBSITE DISCLAIMER</h2>
 
   <p>
-    The information provided by {$_('app-name')} ("we," "us," or "our") on
-    https://{$_('app-name')}.recoskyler.com (the "Site") and our mobile application is
+    The information provided by {$t('common.app-name')} ("we," "us," or "our") on
+    https://{$t('common.app-name')}.recoskyler.com (the "Site") and our mobile application is
     for general informational purposes only. All information on the Site and our
     mobile application is provided in good faith, however we make no
     representation or warranty of any kind, express or implied, regarding the

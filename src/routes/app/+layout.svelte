@@ -22,7 +22,7 @@
   import githubBlack from '$lib/assets/github-mark.svg';
   import { page } from '$app/stores';
   import Logo from 'components/Logo.svelte';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { PUBLIC_GITHUB_LINK } from '$env/static/public';
   import { ENABLE_GITHUB_ICON, ENABLE_THEMES } from '$lib/constants';
 
@@ -39,8 +39,8 @@
       <svelte:fragment slot="lead">
         {#if $canGoBack}
           <button
-            aria-label={$_('go-back')}
-            title={$_('go-back')}
+            aria-label={$t('common.go-back')}
+            title={$t('common.go-back')}
             class="p-2 ml-2 transition-all hover:bg-slate-300 dark:hover:bg-slate-700 rounded-full"
             on:click={async () => {
               const url = $canGoBack;
@@ -61,7 +61,7 @@
         <Logo />
       {:else}
         <h3 class="h3">
-          {$_($pageTitle)}
+          {$t($pageTitle)}
         </h3>
       {/if}
 
@@ -111,7 +111,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('page-title.home')}</span>
+        <span>{$t('page-title.home')}</span>
       </AppRailAnchor>
 
       {#if data.isModerator}
@@ -122,7 +122,7 @@
             </div>
           </svelte:fragment>
 
-          <span>{$_('page-title.moderation')}</span>
+          <span>{$t('page-title.moderation')}</span>
         </AppRailAnchor>
       {/if}
 
@@ -136,7 +136,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('page-title.profile')}</span>
+        <span>{$t('page-title.profile')}</span>
       </AppRailAnchor>
     </AppRail>
   </svelte:fragment>
@@ -162,7 +162,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('page-title.home')}</span>
+        <span>{$t('page-title.home')}</span>
       </TabAnchor>
 
       {#if data.isModerator}
@@ -173,7 +173,7 @@
             </div>
           </svelte:fragment>
 
-          <span>{$_('page-title.moderation')}</span>
+          <span>{$t('page-title.moderation')}</span>
         </TabAnchor>
       {/if}
 
@@ -187,7 +187,7 @@
           </div>
         </svelte:fragment>
 
-        <span>{$_('page-title.profile')}</span>
+        <span>{$t('page-title.profile')}</span>
       </TabAnchor>
     </TabGroup>
   </svelte:fragment>

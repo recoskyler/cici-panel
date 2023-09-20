@@ -8,7 +8,7 @@
   import type { PageData } from './$types';
   import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { _ } from 'svelte-i18n';
+  import { t } from '$lib/i18n';
   import { ENABLE_THEMES } from '$lib/constants';
 
   export let data: PageData;
@@ -27,23 +27,23 @@
 </script>
 
 <svelte:head>
-  <title>{$_('app-name')} | {$_('auth.create-an-account')}</title>
+  <title>{$t('common.app-name')} | {$t('auth.create-an-account')}</title>
 </svelte:head>
 
 <div class="login-cont mx-auto flex-col my-auto w-full py-10 px-5 max-w-sm">
-  <h1 class="h2 text-center mb-5">{$_('auth.create-an-account')}</h1>
+  <h1 class="h2 text-center mb-5">{$t('auth.create-an-account')}</h1>
 
   <form method="POST" use:enhance>
     <label for="email" class="label mb-2 mt-5">
-      <span>{$_('auth.email')}</span>
+      <span>{$t('auth.email')}</span>
 
       <input
         id="email"
         name="email"
         type="email"
         class="input"
-        title={$_('auth.email')}
-        placeholder={$_('auth.email-placeholder')}
+        title={$t('auth.email')}
+        placeholder={$t('auth.email-placeholder')}
         autocomplete="email"
         disabled={$delayed}
         bind:value={$form.email}
@@ -54,7 +54,7 @@
     </label>
 
     <label for="password" class="label mb-2 mt-5">
-      <span>{$_('auth.password')}</span>
+      <span>{$t('auth.password')}</span>
 
       <PasswordPopup password={$form.password} />
 
@@ -64,7 +64,7 @@
           name="password"
           class="input"
           type={passwordVisible ? 'text' : 'password'}
-          placeholder={$_('auth.password-placeholder')}
+          placeholder={$t('auth.password-placeholder')}
           disabled={$delayed}
           value={$form.password}
           use:popup={passwordPopupFocusBlur}
@@ -79,7 +79,7 @@
           }}
           type="button"
           class="flex items-center justify-center"
-          title={$_('auth.show-hide-password')}
+          title={$t('auth.show-hide-password')}
         >
           <Fa fw icon={passwordVisible ? faEye : faEyeSlash} />
         </button>
@@ -93,20 +93,20 @@
     <PasswordStrengthMeter password={$form.password} />
 
     <p class="text-center text-slate-600 dark:text-slate-400">
-      <span>{$_('auth.by-continuing-you-agree-pt1')}</span>
+      <span>{$t('auth.by-continuing-you-agree-pt1')}</span>
       <br />
-      <a class="anchor" href="/disclaimer">{$_('disclaimer')}</a>
+      <a class="anchor" href="/disclaimer">{$t('common.disclaimer')}</a>
       <span>, </span>
-      <a class="anchor" href="/cookie">{$_('cookie-policy')}</a>
-      <span>, {$_('and')} </span>
-      <a class="anchor" href="/privacy">{$_('privacy-policy')}</a>
+      <a class="anchor" href="/cookie">{$t('common.cookie-policy')}</a>
+      <span>, {$t('common.and')} </span>
+      <a class="anchor" href="/privacy">{$t('common.privacy-policy')}</a>
       <br />
-      <span>{$_('auth.by-continuing-you-agree-pt2')}</span>
+      <span>{$t('auth.by-continuing-you-agree-pt2')}</span>
     </p>
 
     <input
       type="submit"
-      value={$delayed ? $_('auth.signing-up') : $_('continue')}
+      value={$delayed ? $t('auth.signing-up') : $t('common.continue')}
       class={`btn mt-5 w-full ${
         $delayed ? 'variant-filled-surface' : 'variant-filled'
       }`}
@@ -118,9 +118,9 @@
 
   <p class="text-center">
     <span class="text-slate-600 dark:text-slate-400">
-      {$_('auth.already-have-an-account')}
+      {$t('auth.already-have-an-account')}
     </span>
-    <a class="anchor" href="/login">{$_('auth.sign-in-now')}</a>
+    <a class="anchor" href="/login">{$t('auth.sign-in-now')}</a>
   </p>
 
   {#if ENABLE_THEMES}
